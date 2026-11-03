@@ -1,4 +1,4 @@
-    import { useMemo } from 'react'
+    import { useMemo, useState } from 'react'
     import { IMaskInput } from 'react-imask'
     import { CurrencyInput } from 'react-currency-mask'
     import { FormFile } from './FormFile'
@@ -116,22 +116,38 @@
         />
     )
 
-    const CampoSenha = ({ inputId, fieldName, fieldClass, fieldData, required, onValor, rotulo }) => (
-        <div className={classeDoInput(fieldClass, fieldData)} data-toggle-password="true">
-            <input
-                name={fieldName}
-                id={inputId}
-                aria-label={rotulo}
-                type="password"
-                required={required}
-                onChange={(e) => onValor(e.target.value)}
-            />
-            <div className="btn btn-icon" data-toggle-password-trigger="true">
-                <i className="ki-outline ki-eye toggle-password-active:hidden"></i>
-                <i className="ki-outline ki-eye-slash hidden toggle-password-active:block"></i>
+    const CampoSenha = ({ inputId, fieldName, fieldClass, fieldData, required, onValor, rotulo }) => {
+        const [visivel, setVisivel] = useState(false)
+
+        return (
+            <div className={`${classeDoInput(fieldClass, fieldData)}${visivel ? ' active' : ''}`} data-toggle-password="true">
+                <input
+                    name={fieldName}
+                    id={inputId}
+                    aria-label={rotulo}
+                    type={visivel ? 'text' : 'password'}
+                    // Visível como texto, a senha não pode ir para o corretor do navegador nem para o histórico de preenchimento.
+                    spellCheck={false}
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    autoComplete={visivel ? 'off' : undefined}
+                    required={required}
+                    onChange={(e) => onValor(e.target.value)}
+                />
+                <button
+                    type="button"
+                    className="btn btn-icon min-h-8 min-w-8 shrink-0"
+                    data-toggle-password-trigger="true"
+                    onClick={() => setVisivel((atual) => !atual)}
+                    aria-label={visivel ? 'Ocultar senha' : 'Mostrar senha'}
+                    aria-pressed={visivel}
+                    aria-controls={inputId}
+                >
+                    <i className={`ki-outline ${visivel ? 'ki-eye-slash' : 'ki-eye'}`} aria-hidden="true"></i>
+                </button>
             </div>
-        </div>
-    )
+        )
+    }
 
     const CampoTextoLongo = ({ inputId, fieldName, fieldClass, fieldData, valor, required, onValor, rotulo }) => {
 
