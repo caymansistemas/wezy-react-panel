@@ -6,6 +6,17 @@
 /* Shadcn UI */
 @import 'shadcn.ui';
 
+/* O SAFARI NO iOS DÁ ZOOM AUTOMÁTICO AO FOCAR CONTROLES COM FONTE MENOR QUE
+   16px. MANTÉM OS TAMANHOS COMPACTOS NO DESKTOP E EVITA QUE LOGIN E FORMULÁRIOS
+   INTERNOS FIQUEM PRESOS NO ZOOM EM TELAS MÓVEIS. */
+@media (max-width: 1023px) {
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
 /* TOKENS DO FORMULÁRIO — AS CORES APROVADAS NO LIGHT ERAM CHUMBADAS (#e6e6e7 e
    rgb(250 250 250)) E QUEBRAVAM O DARK MODE. AQUI CADA UMA GANHA O EQUIVALENTE
    ESCURO; O .dark É O MESMO MECANISMO DAS --tw-gray-* DO TEMA (darkMode: 'class'). */
