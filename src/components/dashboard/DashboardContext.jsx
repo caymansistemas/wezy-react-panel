@@ -135,7 +135,8 @@
             : grupos
                 .map((grupo) => ({
                     ...grupo,
-                    itens: grupo.itens.filter((item) => `${item.title} ${grupo.titulo}`.toLowerCase().includes(termo)),
+                    //PELO NOME, PELO GRUPO OU PELO LINK DO MÓDULO (?pag=relatorio-vendas: "relatorio-v" ACHA)
+                    itens: grupo.itens.filter((item) => `${item.title} ${grupo.titulo} ${paginaDe(item.path)}`.toLowerCase().includes(termo)),
                 }))
                 .filter((grupo) => grupo.itens.length > 0)
 
