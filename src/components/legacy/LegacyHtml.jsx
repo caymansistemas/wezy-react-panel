@@ -42,7 +42,7 @@
 
         const ref          = useRef(null)
         const navigate     = useNavigate()
-        const { callApi }  = usePageData()
+        const { callApi, aplicarResposta } = usePageData()
 
         // MONTA O HTML E EXECUTA OS SCRIPTS
         useEffect(() => {
@@ -247,9 +247,11 @@
                         return
                     }
 
-                    // SEM REDIRECT: RECARREGA A TELA ATUAL (O CARTÃO PODE TER GUARDADO FILTROS NA SESSÃO)
+                    // SEM REDIRECT: A RESPOSTA DO POST JÁ É A TELA ATUAL COM O FILTRO APLICADO (MESMA URL). SÓ RECARREGA
+                    // QUANDO O POST FOI PARA OUTRA URL OU NÃO DEVOLVEU UMA TELA
                     const urlAtual = buildApiUrl(window.location.search)
-                    if (urlAtual) {
+                    const mesmaTela = apiUrl === legacyUrlToApiUrl(window.location.search || '?')
+                    if (!(mesmaTela && aplicarResposta(response?.data)) && urlAtual) {
                         callApi(urlAtual)
                     }
 
@@ -269,7 +271,7 @@
                 container.removeEventListener('submit', aoEnviar)
             }
 
-        }, [navigate, callApi])
+        }, [navigate, callApi, aplicarResposta])
 
         //legacy-html: MARCA USADA PELO legacy-runtime.js (SERVIDO PELA API) PARA DATAS, FOTOS E EXCLUSÃO DO LEGADO
         return <div ref={ref} className={`legacy-html ${className}`.trim()} style={style} />
