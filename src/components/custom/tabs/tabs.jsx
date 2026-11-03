@@ -115,6 +115,8 @@ const Tabs = ({ className, tabs }) => {
             data-tabs="true"
             className={cn(
                 className ? className : 'tabs w-f mb-3',
+                //min-w-0: DENTRO DE UM FLEX (card-header DO FormTabs) O ITEM NÃO ENCOLHIA ABAIXO DAS ABAS E NÃO ROLAVA
+                'min-w-0 max-w-full',
                 //BARRA DE ROLAGEM ESCONDIDA: O DEGRADÊ DAS BORDAS É QUEM AVISA QUE HÁ MAIS ABAS
                 'overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden overscroll-x-contain',
                 (bordas.antes || bordas.depois) && 'cursor-grab active:cursor-grabbing select-none'

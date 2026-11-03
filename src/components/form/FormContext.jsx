@@ -228,7 +228,8 @@
         ))
 
         return (
-            <div className="grid gap-1 mx-auto">
+            //grid-cols-1 = minmax(0,1fr): A COLUNA "auto" CRESCIA ATÉ A LARGURA DAS ABAS ($setBotoesForm) E ELAS NÃO ROLAVAM
+            <div className="grid grid-cols-1 gap-1 mx-auto">
 
                 {abas && <FormTabs tabs={abas} />}
 
