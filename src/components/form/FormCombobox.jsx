@@ -62,14 +62,36 @@
     }
 
     //CHIPS DO multiple: O X DO CHIP SÓ DESMARCA (SEM PERGUNTAR)
-    const ChipsSelecionados = ({ selecionados, placeholder, labelDoValor, corExtra, onDesmarcar }) => (
+    //MUITAS MARCADAS (ex.: "Todas" E DEPOIS DESMARCOU UMA): AS PRIMEIRAS VIRAM CHIP E O RESTO UM "+N" (A LISTA MOSTRA TODAS)
+    const MAX_CHIPS = 10
+
+    //todas: TODAS AS OPÇÕES MARCADAS ("Todas" DA LISTA) VIRAM UM CHIP SÓ — COM CENTENAS DE TAGS O CAMPO VIRAVA UM PAREDÃO.
+    //O X DELE LIMPA A SELEÇÃO
+    const ChipsSelecionados = ({ selecionados, placeholder, labelDoValor, corExtra, onDesmarcar, todas, onLimpar }) => (
         <span className="flex flex-1 flex-wrap gap-1.5 min-w-0">
 
             {selecionados.length === 0 && (
                 <span className="text-gray-500 font-normal">{placeholder}</span>
             )}
 
-            {selecionados.map((valor) => (
+            {todas && (
+                <span className="badge flex items-center gap-1.5 max-w-full px-2 py-1 text-2sm font-medium !text-[var(--form-control-text)] !bg-gray-200 !border-gray-300">
+                    Todas ({selecionados.length})
+                    <button
+                        type="button"
+                        aria-label="Desmarcar todas"
+                        className="cursor-pointer"
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            onLimpar()
+                        }}
+                    >
+                        <X className="size-3" />
+                    </button>
+                </span>
+            )}
+
+            {!todas && selecionados.slice(0, selecionados.length > MAX_CHIPS ? MAX_CHIPS - 2 : MAX_CHIPS).map((valor) => (
                 <span key={valor} className="badge flex items-center gap-1.5 max-w-full px-2 py-1 text-2sm font-medium !text-[var(--form-control-text)] !bg-gray-200 !border-gray-300">
                     <LabelComCor option={labelDoValor(valor)} corExtra={corExtra} />
                     <button
@@ -85,6 +107,12 @@
                     </button>
                 </span>
             ))}
+
+            {!todas && selecionados.length > MAX_CHIPS && (
+                <span className="badge px-2 py-1 text-2sm font-medium !text-[var(--form-control-text)] !bg-gray-100 !border-gray-300">
+                    +{selecionados.length - (MAX_CHIPS - 2)}
+                </span>
+            )}
 
         </span>
     )
@@ -195,6 +223,21 @@
 
         }
 
+        //"Todas" NO TOPO DA LISTA DO multiple (ex.: "Tags do público" / "Tamanho do público" NO ?pag=emails-campanhas):
+        //MARCA TODAS AS OPÇÕES DE UMA VEZ; COM TUDO MARCADO VIRA "Desmarcar todas". SÓ SEM BUSCA (A AÇÃO É SOBRE A LISTA
+        //INTEIRA) E FORA DO creatable (TAGS LIVRES NÃO TÊM UM "TODAS")
+        const podeMarcarTodas = multiple && !creatable && options.length > 1
+        const mostraTodas = podeMarcarTodas && search === ''
+        const todasMarcadas = podeMarcarTodas && options.every((option) => marcados.has(String(option.value)))
+        const alternaTodas = () => {
+            if (todasMarcadas) {
+                onChange([])
+                return
+            }
+            //MANTÉM A ORDEM DO QUE JÁ ESTAVA MARCADO E ACRESCENTA O RESTO NA ORDEM DA LISTA
+            onChange([...selecionados, ...options.map((option) => String(option.value)).filter((valor) => !marcados.has(valor))])
+        }
+
         //formatarTermo: MÁSCARA NO TEXTO DIGITADO (ex.: TELEFONE NAS TAGS); termoValido: SÓ CRIA QUANDO O TEXTO ESTÁ COMPLETO
         const termo         = search.trim()
         const termoInvalido = creatable && termo !== '' && termoValido && !termoValido(termo)
@@ -233,6 +276,8 @@
                                 labelDoValor={labelDoValor}
                                 corExtra={corExtra}
                                 onDesmarcar={(valor) => onChange(selecionados.filter((item) => item !== valor))}
+                                todas={podeMarcarTodas && todasMarcadas}
+                                onLimpar={() => onChange([])}
                             />
                         ) : (
                             <span className={cn('flex-1 min-w-0', !atual && 'text-gray-500 font-normal')}>
@@ -269,6 +314,17 @@
                             {!podeCriar && <CommandEmpty>{termoInvalido ? avisoTermoInvalido : 'Nenhum resultado'}</CommandEmpty>}
 
                             <CommandGroup>
+
+                                {mostraTodas && (
+                                    <CommandItem
+                                        value="__todas__"
+                                        onSelect={alternaTodas}
+                                        className={cn('cursor-pointer border-b border-gray-200 rounded-none mb-1', todasMarcadas ? CLASSE_SELECIONADA : CLASSE_NAO_SELECIONADA)}
+                                    >
+                                        <Check className={cn('shrink-0', todasMarcadas ? 'opacity-100 text-primary' : 'opacity-0')} />
+                                        <span className="font-semibold">{todasMarcadas ? 'Desmarcar todas' : 'Todas'}</span>
+                                    </CommandItem>
+                                )}
 
                                 {comChaves(options, (option) => option.value).map(({ item: option, chave }) => (
                                     <OpcaoDoCombobox
