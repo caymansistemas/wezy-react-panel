@@ -108,7 +108,7 @@ const RodapeDoUsuario = () => {
 }
 
 // CONTEÚDO DO MENU DO USUÁRIO (DENTRO DO MenuSub QUE O SidebarFooter MONTA — O MenuItem PRECISA DELE COMO FILHO DIRETO)
-const DropdownUserPanel = () => {
+const DropdownUserPanel = ({ onTrocarConta, podeTrocarConta = false }) => {
 
     const { usuarioLogado } = useAuthContext()
     const { getMenuConfig } = useMenus()
@@ -117,6 +117,12 @@ const DropdownUserPanel = () => {
         <>
             <CabecalhoDoUsuario usuario={usuarioLogado} />
             <ModulosDoUsuario itens={getMenuConfig('primary')?.user} />
+            {podeTrocarConta && <div className="menu-item">
+                <button type="button" className="menu-link text-start" onClick={onTrocarConta}>
+                    <MenuIcon className="menu-icon"><KeenIcon icon="profile-circle" /></MenuIcon>
+                    <MenuTitle>Trocar de conta</MenuTitle>
+                </button>
+            </div>}
             <RodapeDoUsuario />
         </>
     )

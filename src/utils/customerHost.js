@@ -32,10 +32,11 @@ const hostDoEndereco = () => {
  * Regras (em ordem de prioridade):
  * 1. Se a URL tiver ?a=<host>, esse valor é salvo e passa a ser usado.
  *    Ex.: painel.manentti.com.br/?a=carbonebrasil.com  ->  carbonebrasil.com
- * 2. Endereço de cliente (fora de VITE_PLATFORM_HOSTS): o próprio domínio, sem "painel.".
+ * 2. Cliente fixado anteriormente por ?a= ou pela troca de conta.
+ * 3. Endereço de cliente (fora de VITE_PLATFORM_HOSTS): o próprio domínio, sem "painel.".
  *    Ex.: painel.dudaimoveis.com.br  ->  dudaimoveis.com.br
- * 3. Caso já exista um valor salvo anteriormente (login ou ?a=), ele é reutilizado.
- * 4. Endereço da plataforma sem nada salvo: o domínio (sem "painel.", se tiver).
+ * 4. Cliente salvo pelo login central.
+ * 5. Endereço da plataforma sem nada salvo: o domínio (sem "painel.", se tiver).
  *
  * Se nenhum caso resolver um host válido (ex.: domínio vazio), retorna null e
  * dispara o sinal de "sistema não encontrado", bloqueando o app.
@@ -51,6 +52,10 @@ const getCustomerHost = () => {
             setData(FIXED_CUSTOMER_HOST_STORAGE_KEY, override)
             return override
         }
+
+        // Uma escolha explícita (?a= ou troca de conta) continua valendo ao navegar sem a query.
+        const fixo = getData(FIXED_CUSTOMER_HOST_STORAGE_KEY)
+        if (fixo) return fixo
 
         // 2. Endereço do próprio cliente
         const doEndereco = hostDoEndereco()
@@ -91,10 +96,11 @@ const getCustomerHost = () => {
  * Define o Customer-Host salvo — usado após o login centralizado, que retorna
  * o `dominio` do painel do cliente ao qual o usuário pertence.
  */
-const setCustomerHost = (host) => {
+const setCustomerHost = (host, fixo = false) => {
     if (!host) return
     try {
         setData(CUSTOMER_HOST_STORAGE_KEY, host)
+        if (fixo) setData(FIXED_CUSTOMER_HOST_STORAGE_KEY, host)
     } catch (error) {
         console.error('CUSTOMER HOST SET ERROR', error)
     }
@@ -112,7 +118,7 @@ const getFixedCustomerHost = () => {
             return override
         }
         return (
-            hostDoEndereco() || getData(FIXED_CUSTOMER_HOST_STORAGE_KEY) || null
+            getData(FIXED_CUSTOMER_HOST_STORAGE_KEY) || hostDoEndereco() || null
         )
     } catch (error) {
         console.error('CUSTOMER HOST FIXED RESOLVE ERROR', error)

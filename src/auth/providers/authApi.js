@@ -210,12 +210,43 @@
         const token = authHelper.getAuthToken()
         if (!token) return
 
-        axios
+        return axios
             .post(`${getApiUrl()}/panel/logout`, {}, {
                 headers: { ...JSON_DO_CLIENTE(), Authorization: `Bearer ${token}` },
+                timeout: 5000,
             })
             .catch(() => {})
 
+    }
+
+    // A API lê a identidade da sessão atual; o navegador só informa a conta escolhida.
+    const consultarContas = async (painel, signal) => {
+        try {
+            const config = { headers: { ...JSON_DO_CLIENTE(), Authorization: `Bearer ${authHelper.getAuthToken()}` }, signal }
+            const url = `${getApiUrl()}/panel/accounts`
+            const { data } = painel
+                ? await axios.post(url, { id_painel_cliente: painel.id_painel_cliente, host: painel.host }, config)
+                : await axios.get(url, config)
+            if (data?.status !== true) throw new Error(data?.message || 'Não foi possível consultar as contas.')
+            return data
+        } catch (error) {
+            if (axios.isCancel(error)) throw error
+            throw new Error(error.response?.data?.message || error.response?.data?.error?.message || error.message || 'Não foi possível consultar as contas.')
+        }
+    }
+
+    export const listarContas = async (signal) => {
+        const resposta = await consultarContas(null, signal)
+        if (!Array.isArray(resposta.paineis)) throw new Error('Não foi possível consultar as contas.')
+        return resposta.paineis
+    }
+
+    export const entrarNaConta = async (painel) => {
+        const sessao = await consultarContas(painel)
+        if (!sessao.data?.session_token || !sessao.data?.dominio || !sessao.data?.api_url) {
+            throw new Error('Não foi possível acessar a conta escolhida.')
+        }
+        return sessao
     }
 
     //DADOS DO USUÁRIO LOGADO — VÊM DO PRÓPRIO /auth/master (data.usuario),

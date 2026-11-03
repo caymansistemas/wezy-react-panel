@@ -1,4 +1,4 @@
-    import { forwardRef, useRef } from 'react'
+    import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react'
     import clsx from 'clsx'
     import { toAbsoluteUrl } from '@/utils'
     import { useAuthContext } from '@/auth'
@@ -9,6 +9,10 @@
     import { useResponsive } from '@/hooks'
     import { lerUsoDeDisco, tamanhoLegivel } from '@/utils/usoDeDisco'
     import { BarraDeUso } from '@/components/ui/barra-de-uso'
+    import { ModalTrocarConta } from '@/partials/dropdowns/user/ModalTrocarConta'
+    import { listarContas } from '@/auth/providers/authApi'
+    import { getCustomerHost } from '@/utils/customerHost'
+    import { getApiUrl } from '@/utils/apiUrl'
 
     const AVATAR_PADRAO = '/media/avatars/gray/6.png'
 
@@ -46,11 +50,39 @@
 
     const SidebarFooter = forwardRef((props, ref) => {
 
-        const { sair, usuarioLogado } = useAuthContext()
+        const { sair, usuarioLogado, auth } = useAuthContext()
         const itemUserRef = useRef(null)
+        const userPopperRef = useRef(null)
         const { isRTL } = useLanguage()
         const { getMenuConfig } = useMenus()
         const desktopMode = useResponsive('up', 'lg')
+        const [trocarContaAberto, setTrocarContaAberto] = useState(false)
+        const [disponibilidadeDeContas, setDisponibilidadeDeContas] = useState(null)
+        const podeTrocarConta = !!auth && disponibilidadeDeContas?.sessao === auth && disponibilidadeDeContas.disponivel
+
+        useEffect(() => {
+            if (!auth) return
+            const controller = new AbortController()
+            const dominioAtual = getCustomerHost()
+            const apiAtual = getApiUrl()
+            listarContas(controller.signal)
+                .then((contas) => {
+                    if (controller.signal.aborted) return
+                    const disponivel = contas.some((conta) =>
+                        conta.dominio !== dominioAtual || !apiAtual.includes(`api.${conta.host}.`)
+                    )
+                    setDisponibilidadeDeContas({ sessao: auth, disponivel })
+                })
+                .catch(() => {
+                    if (!controller.signal.aborted) setDisponibilidadeDeContas({ sessao: auth, disponivel: false })
+                })
+            return () => controller.abort()
+        }, [auth])
+
+        // A resposta pode chegar com o dropdown aberto: reposiciona antes de pintar a nova altura.
+        useLayoutEffect(() => {
+            userPopperRef.current?.update()
+        }, [podeTrocarConta])
 
         //USO DE DISCO DO CLIENTE ENVIADO PELO panel/menus (false QUANDO O LEGADO NÃO MOSTRAVA)
         const uso = getMenuConfig('primary')?.usage
@@ -69,6 +101,7 @@
                             toggle="dropdown"
                             trigger="click"
                             dropdownProps={{
+                                popperRef: userPopperRef,
                                 placement: desktopMode
                                     ? (isRTL() ? 'right-start' : 'right-end')
                                     : (isRTL() ? 'top-end' : 'top-start'),
@@ -123,7 +156,10 @@
                                 className="menu-default light:border-gray-300 w-[calc(var(--tw-sidebar-width)-28px)] max-w-[calc(100vw-32px)] max-h-[calc(100dvh-160px)] overflow-y-auto lg:w-[250px] lg:max-h-[calc(100dvh-16px)]"
                                 rootClassName="p-0"
                             >
-                                <DropdownUserPanel />
+                                <DropdownUserPanel podeTrocarConta={podeTrocarConta} onTrocarConta={() => {
+                                    itemUserRef.current?.hide()
+                                    setTrocarContaAberto(true)
+                                }} />
                             </MenuSub>
                         </MenuItem>
                     </Menu>
@@ -140,6 +176,14 @@
 
                 </div>
 
+                <ModalTrocarConta
+                    open={trocarContaAberto}
+                    onOpenChange={setTrocarContaAberto}
+                    onCloseAutoFocus={(event) => {
+                        event.preventDefault()
+                        itemUserRef.current?.current?.querySelector('.menu-toggle')?.focus({ preventScroll: true })
+                    }}
+                />
             </div>
 
         )
