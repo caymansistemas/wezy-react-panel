@@ -103,6 +103,7 @@
         "yup": "^1.4.0"
     },
     "devDependencies": {
+        "@capacitor/assets": "^4.0.0",
         "@eslint/js": "^9.14.0",
         "@ionic/cli": "^7.2.1",
         "@vitejs/plugin-react": "^4.3.3",

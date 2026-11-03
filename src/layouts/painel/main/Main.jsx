@@ -181,7 +181,7 @@
 
                     {mobileMode && <Header />}
 
-                    <div className="flex flex-col lg:flex-row grow pt-[--tw-header-height] lg:pt-0">
+                    <div className="flex flex-col lg:flex-row grow pt-[calc(var(--tw-header-height)+env(safe-area-inset-top,0px))] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] lg:pt-0">
 
                         <div className="flex flex-col grow items-stretch rounded-xl bg-[--tw-content-bg] dark:bg-[--tw-content-bg-dark] border border-gray-300 dark:border-gray-200 lg:ms-[--tw-sidebar-width] mt-0 lg:mt-[15px] m-[15px]">
 
