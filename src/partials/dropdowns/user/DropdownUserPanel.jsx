@@ -13,18 +13,18 @@ const AVATAR_PADRAO = '/media/avatars/gray/6.png'
 
 const CabecalhoDoUsuario = ({ usuario }) => (
     <div className="flex items-center justify-between px-5 py-1.5 gap-1.5">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
             <img
-                className="size-9 rounded-full border-2 border-success object-cover"
+                className="size-9 shrink-0 rounded-full border-2 border-success object-cover"
                 src={usuario?.foto || toAbsoluteUrl(AVATAR_PADRAO)}
                 onError={(e) => { e.currentTarget.src = toAbsoluteUrl(AVATAR_PADRAO) }}
                 alt=""
             />
-            <div className="flex flex-col gap-1.5">
-                <div className="text-sm text-gray-800 hover:text-primary font-semibold leading-none">
+            <div className="flex flex-col gap-1.5 min-w-0">
+                <div className="text-sm text-gray-800 hover:text-primary font-semibold leading-none truncate">
                     {usuario?.nome}
                 </div>
-                <div className="text-xs text-gray-600 hover:text-primary font-medium leading-none">
+                <div className="text-xs text-gray-600 hover:text-primary font-medium leading-none truncate">
                     {usuario?.email}
                 </div>
             </div>

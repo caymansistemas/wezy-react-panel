@@ -6,6 +6,7 @@
     import { DropdownUserPanel } from '@/partials/dropdowns/user'
     import { useLanguage } from '@/i18n'
     import { useMenus } from '@/providers'
+    import { useResponsive } from '@/hooks'
     import { lerUsoDeDisco, tamanhoLegivel } from '@/utils/usoDeDisco'
     import { BarraDeUso } from '@/components/ui/barra-de-uso'
 
@@ -49,6 +50,7 @@
         const itemUserRef = useRef(null)
         const { isRTL } = useLanguage()
         const { getMenuConfig } = useMenus()
+        const desktopMode = useResponsive('up', 'lg')
 
         //USO DE DISCO DO CLIENTE ENVIADO PELO panel/menus (false QUANDO O LEGADO NÃO MOSTRAVA)
         const uso = getMenuConfig('primary')?.usage
@@ -67,12 +69,29 @@
                             toggle="dropdown"
                             trigger="click"
                             dropdownProps={{
-                                placement: isRTL() ? 'right-start' : 'right-end',
+                                placement: desktopMode
+                                    ? (isRTL() ? 'right-start' : 'right-end')
+                                    : (isRTL() ? 'top-end' : 'top-start'),
+                                // O portal precisa pertencer ao Sheet para respeitar seu foco e os cliques.
+                                container: desktopMode ? undefined : () => itemUserRef.current?.current?.closest('[role="dialog"]'),
+                                popperOptions: { strategy: desktopMode ? 'absolute' : 'fixed' },
                                 modifiers: [
                                     {
                                         name: 'offset',
                                         options: {
-                                            offset: isRTL() ? [10, 15] : [-10, 15], // [skid, distance]
+                                            offset: desktopMode ? (isRTL() ? [10, 15] : [-10, 15]) : [0, 8],
+                                        },
+                                    },
+                                    {
+                                        name: 'preventOverflow',
+                                        options: { rootBoundary: 'viewport', padding: 8, altAxis: true },
+                                    },
+                                    {
+                                        name: 'flip',
+                                        options: {
+                                            rootBoundary: 'viewport',
+                                            padding: 8,
+                                            ...(!desktopMode && { fallbackPlacements: ['top-start', 'top-end'] }),
                                         },
                                     },
                                 ],
@@ -100,7 +119,10 @@
                                 </span>
                                 <KeenIcon icon="dots-vertical" className="text-base text-gray-500 shrink-0" />
                             </MenuToggle>
-                            <MenuSub className="menu-default light:border-gray-300 w-[250px]" rootClassName="p-0">
+                            <MenuSub
+                                className="menu-default light:border-gray-300 w-[calc(var(--tw-sidebar-width)-28px)] max-w-[calc(100vw-32px)] max-h-[calc(100dvh-160px)] overflow-y-auto lg:w-[250px] lg:max-h-[calc(100dvh-16px)]"
+                                rootClassName="p-0"
+                            >
                                 <DropdownUserPanel />
                             </MenuSub>
                         </MenuItem>

@@ -61,7 +61,8 @@
                     onOpenChange={handleMobileSidebarClose}
                 >
                     <SheetContent
-                        className="border-0 p-0 w-[--tw-sidebar-width] scrollable-y-auto"
+                        // A rolagem fica no SidebarMenu; o Sheet não deve deslocar o rodapé ao focar o dropdown.
+                        className="border-0 p-0 w-[--tw-sidebar-width] overflow-hidden"
                         forceMount={true}
                         side="left"
                         close={false}
