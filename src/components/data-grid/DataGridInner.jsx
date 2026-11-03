@@ -12,7 +12,9 @@ const DataGridInner = () => {
     return (
         <div
             className={cn(
-                'grid',
+                //grid-cols-1 = minmax(0,1fr): EM TELA DE 320px A COLUNA "auto" NÃO ENCOLHIA ABAIXO DO TOPO (BOTÃO + BUSCA) E A
+                //LISTAGEM VAZAVA DO CARD; ASSIM O TOPO QUEBRA LINHA E A TABELA ROLA DENTRO DO PRÓPRIO CONTÊINER
+                'grid grid-cols-1',
                 props.layout?.card &&
                 `
         card

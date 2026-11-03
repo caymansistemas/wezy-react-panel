@@ -20,10 +20,11 @@
 
     // className EXTRA PERMITE VARIANTES (ex.: 'cf-grid' NAS CÉLULAS DA LISTAGEM);
     // ariaLabel COBRE O USO SEM TEXTO VISÍVEL (select all / select row)
-    const CustomCheckbox = ({ name, value, checked, onChange, label, className = '', ariaLabel }) => (
+    const CustomCheckbox = ({ id, name, value, checked, onChange, label, className = '', ariaLabel }) => (
         <label data-custom-field="checkbox" className={className}>
             <input
                 type="checkbox"
+                id={id}
                 name={name}
                 value={value}
                 checked={checked}
@@ -43,10 +44,11 @@
 
     //className: CLASSE DO ITEM VINDA DA API (ex.: "forms tipo-do-modulo") — OS SCRIPTS LEGADOS
     //(LegacyCodeEditor → arrumaSelect) LOCALIZAM O RADIO MARCADO POR ELA
-    const CustomRadio = ({ name, value, checked, onChange, label, className }) => (
+    const CustomRadio = ({ id, name, value, checked, onChange, label, className }) => (
         <label data-custom-field="radiobutton">
             <input
                 type="radio"
+                id={id}
                 className={className}
                 name={name}
                 value={value}

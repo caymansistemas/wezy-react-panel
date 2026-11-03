@@ -14,22 +14,24 @@
         }
 
         return (
-            <div className="ml-auto flex flex-wrap gap-2 lg:gap-5">
+            //NO MOBILE (< sm) A BUSCA QUEBRA PARA A LINHA DE BAIXO: OCUPA A LARGURA TODA EM VEZ DE FICAR ENCOSTADA À DIREITA
+            <div className="w-full sm:w-auto sm:ml-auto flex flex-wrap gap-2 lg:gap-5">
 
                 <form
                     id="form2"
                     name="form2"
                     role="search"
                     onSubmit={enviar}
-                    className="flex form-busca"
+                    className="flex form-busca w-full sm:w-auto"
                 >
 
-                    <label className="input input-sm">
+                    {/* sm:flex-initial E NÃO flex-none: O .input TEM width:100% E, SEM PODER ENCOLHER, EMPURRAVA A LUPA PARA FORA DO CARD */}
+                    <label className="input input-sm min-w-0 flex-1 sm:flex-initial">
                         <input
                             type="text"
                             name="FrmBusca"
                             id="FrmBusca"
-                            className="inputBusca"
+                            className="inputBusca min-w-0"
                             aria-label={search?.placeholder || 'Buscar'}
                             placeholder={search?.placeholder}
                             value={searchInput}

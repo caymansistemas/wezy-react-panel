@@ -82,7 +82,7 @@
         return (
             <div className={combinedClass} {...rowAttr}>
 
-                <div className="form-label flex flex-col w-full lg:w-56 lg:min-w-56 lg:shrink-0 h-full justify-center">
+                <div className="form-label flex flex-col w-full lg:w-56 lg:min-w-56 lg:shrink-0 lg:h-full justify-center">
                     <b>
                         {fieldData.title || field.title}
                         {required && (
@@ -90,7 +90,7 @@
                         )}
                     </b>
                     {(fieldData.subtitle || field.subtitle) && (
-                        <span className="text-[10px]">
+                        <span className="text-[10px] text-gray-600">
                             {' '}
                             {fieldData.subtitle || field.subtitle}{' '}
                         </span>

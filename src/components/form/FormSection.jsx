@@ -182,7 +182,7 @@
                     ficaria recuada nas laterais em vez de atravessar o card inteiro. */}
                 {/* A BORDA SEPARADORA SÓ CONTA AS LINHAS VISÍVEIS: A ESCONDIDA POR data-valid-* (NO DOM) NÃO FAZ A PRIMEIRA
                     VISÍVEL GANHAR BORDA EM CIMA */}
-                <div className={`card-body !px-0 grid gap-4 empty:hidden [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-t [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-[color:var(--form-divider)] [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:pt-4${semLinhaVisivel ? ' !hidden' : ''}`}>
+                <div className={`card-body !px-0 grid grid-cols-1 gap-4 empty:hidden [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-t [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-[color:var(--form-divider)] [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:pt-4${semLinhaVisivel ? ' !hidden' : ''}`}>
 
                     {linhas.map(({ field, chave, idx, linha }) => (
                         <CampoDaSecao key={chave} field={field} idx={idx} className={linha.className} atributos={linha.atributos} secao={secao} />

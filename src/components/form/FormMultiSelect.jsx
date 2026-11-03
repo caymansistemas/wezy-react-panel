@@ -75,7 +75,7 @@
             <div className={combinedClass} {...rowAttr}>
 
                 {title !== false && (
-                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col h-full justify-center">
+                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">
                         {/* span E NÃO label: O CAMPO É UM COMBOBOX (NÃO UM INPUT NATIVO); O NOME CHEGA NELE PELO ariaLabel */}
                         <span>
                             <b>
@@ -83,12 +83,13 @@
                                 {required && <span className="text-danger"> *</span>}
                             </b>
                         </span>
-                        {subtitle && <span className="text-[10px]"> {subtitle} </span>}
+                        {subtitle && <span className="text-[10px] text-gray-600"> {subtitle} </span>}
                     </div>
                 )}
 
                 {/* max-width:500px VEM DO PRÓPRIO CARD LEGADO (ex.: Domínios adicionais em ?pag=clientes) */}
-                <div className="w-full min-w-0">
+                {/* MESMA LARGURA DO SELECT SIMPLES (FormSelect): ANTES ESTICAVA ATÉ A BORDA DO CARD */}
+                <div className="w-full lg:flex-1 min-w-0 max-w-[578px]">
 
                     <Combobox
                         ariaLabel={title || undefined}

@@ -1,4 +1,4 @@
-    import { useMemo } from 'react'
+    import { useCallback, useMemo, useRef, useState } from 'react'
     import Chart from 'react-apexcharts'
     import clsx from 'clsx'
     import { KeenIcon } from '@/components/keenicons'
@@ -30,6 +30,50 @@
     const rotuloCurto = (rotulo) => {
         const data = /^(\d{2}\/\d{2})\/\d{4}$/.exec(String(rotulo ?? ''))
         return data ? data[1] : rotulo
+    }
+
+    //RÓTULOS LONGOS DO EIXO X (ex.: ETAPAS "Aguardando aprovação representante" NO relatorio-01/04): COM rotate:0 NUMA LINHA
+    //SÓ ELES SE SOBREPUNHAM. CONFORME O ESPAÇO DE CADA BARRA: QUEBRA EM ATÉ 3 LINHAS (O APEX ACEITA CATEGORIA COMO ARRAY)
+    //OU, SEM ESPAÇO NEM PARA ISSO (MUITAS BARRAS / CARD ESTREITO), GIRA 45° COM O TEXTO ENCURTADO. O TOOLTIP MOSTRA O INTEIRO
+    const LETRAS_POR_LINHA = 14
+    //LARGURA MÍNIMA DE CADA BARRA PARA 14 LETRAS POR LINHA (FONTE DE 12px) SEM ENCOSTAR NO VIZINHO
+    const PX_PARA_QUEBRAR = 85
+
+    const encurta = (texto, limite) => (texto.length > limite ? texto.slice(0, limite - 1).trimEnd() + '…' : texto)
+
+    const quebraEmLinhas = (texto, letrasPorLinha) => {
+        const linhas = []
+        for (const palavra of texto.split(/s+/)) {
+            const ultima = linhas.length - 1
+            if (ultima >= 0 && (linhas[ultima] + ' ' + palavra).length <= letrasPorLinha) linhas[ultima] += ' ' + palavra
+            else linhas.push(encurta(palavra, letrasPorLinha))
+        }
+        if (linhas.length <= 3) return linhas
+        return [...linhas.slice(0, 2), encurta(linhas[2] + '…', letrasPorLinha)]
+    }
+
+    const rotulosDoEixo = (rotulos, largura) => {
+        const textos = rotulos.map((rotulo) => String(rotuloCurto(rotulo) ?? ''))
+        if (Math.max(0, ...textos.map((texto) => texto.length)) <= LETRAS_POR_LINHA) return { categorias: textos, rotacao: 0 }
+        //ÁREA DO GRÁFICO ~85% DO CARD (EIXO Y E MARGENS); ANTES DE MEDIR (largura 0) QUEBRA
+        const pxPorBarra = largura ? (largura * 0.85) / Math.max(textos.length, 1) : PX_PARA_QUEBRAR
+        if (pxPorBarra >= PX_PARA_QUEBRAR) {
+            return { categorias: textos.map((texto) => (texto.length <= LETRAS_POR_LINHA ? texto : quebraEmLinhas(texto, LETRAS_POR_LINHA))), rotacao: 0 }
+        }
+        return { categorias: textos.map((texto) => encurta(texto, 22)), rotacao: -45 }
+    }
+
+    //LARGURA ATUAL DO CARD DO GRÁFICO (OS RÓTULOS DEPENDEM DELA)
+    const useLargura = () => {
+        const [largura, setLargura] = useState(0)
+        const observer = useRef(null)
+        const ref = useCallback((elemento) => {
+            observer.current?.disconnect()
+            if (!elemento) return
+            observer.current = new ResizeObserver(([entrada]) => setLargura(Math.round(entrada.contentRect.width)))
+            observer.current.observe(elemento)
+        }, [])
+        return [ref, largura]
     }
 
     //CORES DO TEMA (VARIÁVEIS DO METRONIC) LIDAS NO RENDER: O APEX DESENHA EM SVG E NÃO ACEITA var() NOS ATRIBUTOS
@@ -79,6 +123,11 @@
 
         const tipo = card.type === 'bar' ? 'bar' : 'line'
         const varias = (card.series || []).length > 1
+        const [refDoGrafico, largura] = useLargura()
+        //LINHA (DATAS dd/mm, ATÉ 31 PONTOS) SEGUE COM O tickAmount; A QUEBRA/ROTAÇÃO É SÓ PARA AS BARRAS
+        const { categorias, rotacao } = tipo === 'bar'
+            ? rotulosDoEixo(card.labels || [], largura)
+            : { categorias: (card.labels || []).map(rotuloCurto), rotacao: 0 }
 
         const options = {
             ...opcoesBase(tema),
@@ -86,12 +135,14 @@
             markers: { size: 0, hover: { size: 5 } },
             plotOptions: { bar: { borderRadius: 4, borderRadiusApplication: 'end', columnWidth: '60%' } },
             legend: { ...opcoesBase(tema).legend, show: varias },
+            //RÓTULO GIRADO 45° CRESCE PARA A ESQUERDA: SEM O RESPIRO O PRIMEIRO SAÍA CORTADO
+            grid: { ...opcoesBase(tema).grid, ...(rotacao ? { padding: { left: 40 } } : {}) },
             xaxis: {
-                categories: card.labels || [],
+                categories: categorias,
                 //NO MÁXIMO ~12 RÓTULOS NO EIXO (31 DIAS EMBOLAVAM); O TOOLTIP MOSTRA CADA DIA
                 tickAmount: Math.min(Math.max((card.labels || []).length - 1, 1), 12),
                 tickPlacement: 'on',
-                labels: { rotate: 0, hideOverlappingLabels: true, formatter: rotuloCurto },
+                labels: { rotate: rotacao, rotateAlways: rotacao !== 0, hideOverlappingLabels: true, trim: false, maxHeight: 110 },
                 axisBorder: { color: tema.grade },
                 axisTicks: { show: false },
                 tooltip: { enabled: false },
@@ -108,7 +159,11 @@
 
         const series = (card.series || []).map((serie) => ({ name: serie.name || card.title || 'Valor', data: serie.data || [] }))
 
-        return <Chart type={tipo} height={320} series={series} options={options} />
+        return (
+            <div ref={refDoGrafico}>
+                <Chart type={tipo} height={320} series={series} options={options} />
+            </div>
+        )
 
     }
 
@@ -122,7 +177,16 @@
             ...opcoesBase(tema),
             labels: card.labels || [],
             stroke: { width: 2, colors: [tema.fundo] },
-            legend: { position: 'bottom', horizontalAlign: 'center', fontSize: '13px', markers: { width: 10, height: 10, radius: 10 }, itemMargin: { horizontal: 8, vertical: 4 } },
+            //MUITAS FATIAS (ex.: UM CLIENTE POR FATIA): A LEGENDA OCUPAVA QUASE TODA A ALTURA E O DONUT FICAVA MINÚSCULO.
+            //ALTURA FIXA COM ROLAGEM (O APEX ROLA A LEGENDA SOZINHO)
+            legend: {
+                position: 'bottom',
+                horizontalAlign: 'center',
+                fontSize: '13px',
+                markers: { width: 10, height: 10, radius: 10 },
+                itemMargin: { horizontal: 8, vertical: 4 },
+                ...(valores.length > 6 ? { height: 72 } : {}),
+            },
             dataLabels: {
                 enabled: true,
                 formatter: (percentual) => Math.round(percentual) + '%',
@@ -131,6 +195,8 @@
             },
             plotOptions: {
                 pie: {
+                    //% SÓ NAS FATIAS COM ESPAÇO (AS FINAS EMBOLAVAM OS NÚMEROS UNS EM CIMA DOS OUTROS); O TOOLTIP MOSTRA TODAS
+                    dataLabels: { minAngleToShowLabel: 18 },
                     donut: {
                         size: '62%',
                         labels: {
@@ -158,10 +224,11 @@
     const Numeros = ({ card }) => (
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-3">
             {comChaves(card.items, (item) => item.label).map(({ item, chave }) => (
-                <div key={chave} className="rounded-lg border border-gray-200 bg-light px-4 py-3.5">
+                //min-w-0 + break-all: VALOR LONGO (ex.: "R$213.208,57" NO relatorio-03) EM 2 COLUNAS NO CELULAR ESTOURAVA O CARD
+                <div key={chave} className="min-w-0 rounded-lg border border-gray-200 bg-light px-4 py-3.5">
                     <div className="text-2sm text-gray-600 mb-1">{item.label}</div>
                     <div className="flex items-baseline gap-2 flex-wrap">
-                        <span className="text-2xl font-semibold text-gray-900 leading-tight">{item.value}</span>
+                        <span className="min-w-0 break-all text-xl sm:text-2xl font-semibold text-gray-900 leading-tight">{item.value}</span>
                         {item.trend && (
                             <span
                                 className="rounded-full px-2 py-0.5 text-2xs font-medium"

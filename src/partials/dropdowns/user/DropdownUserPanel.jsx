@@ -66,7 +66,7 @@ const ModulosDoUsuario = ({ itens }) => {
 const RodapeDoUsuario = () => {
 
     const { settings, storeSettings } = useSettings()
-    const { logout } = useAuthContext()
+    const { sair } = useAuthContext()
 
     return (
         <div className="flex flex-col">
@@ -96,7 +96,7 @@ const RodapeDoUsuario = () => {
                 {/* AÇÃO, NÃO NAVEGAÇÃO: <button> (O <a> SEM href NÃO RECEBIA FOCO PELO TECLADO) */}
                 <button
                     type="button"
-                    onClick={logout}
+                    onClick={sair}
                     className="btn btn-sm btn-light justify-center"
                 >
                     <FormattedMessage id="USER.MENU.LOGOUT" />
