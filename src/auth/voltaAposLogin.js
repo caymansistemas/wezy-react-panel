@@ -27,9 +27,25 @@ export const lerVoltaAposLogin = () => {
 }
 
 export const limparVoltaAposLogin = () => {
+    saidaVoluntaria = false
     try {
         sessionStorage.removeItem(CHAVE)
     } catch {
         //NADA A LIMPAR
     }
 }
+
+//SAIU PELO BOTÃO "Sair" (E NÃO POR SESSÃO EXPIRADA): O PRÓXIMO LOGIN PODE SER DE OUTRA CONTA, SEM AQUELE MÓDULO,
+//ENTÃO NÃO GUARDA A TELA ATUAL. VARIÁVEL DO MÓDULO (NÃO É CONSUMIDA NO RENDER, QUE PODE RODAR DUAS VEZES); O LOGIN ZERA
+let saidaVoluntaria = false
+
+export const marcarSaidaVoluntaria = () => {
+    saidaVoluntaria = true
+    try {
+        sessionStorage.removeItem(CHAVE)
+    } catch {
+        //NADA A LIMPAR
+    }
+}
+
+export const saiuVoluntariamente = () => saidaVoluntaria

@@ -109,7 +109,7 @@
                             {saudacao()}{primeiroNome ? `, ${primeiroNome}` : ''}
                         </h1>
                         {painel && (
-                            <span className="flex items-center gap-1.5 text-sm text-gray-700">
+                            <span className="flex min-w-0 items-center gap-1.5 text-sm text-gray-700">
                                 <KeenIcon icon="home-2" className="text-base text-gray-500" />
                                 <span className="truncate">Painel <span className="font-medium text-gray-900">{painel}</span></span>
                             </span>
@@ -169,7 +169,7 @@
 
                 <div className="card-body flex flex-col gap-6">
                     {carregando && (
-                        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-hidden="true">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-hidden="true">
                             {ESQUELETOS.map((chave) => (
                                 <Skeleton key={chave} className="h-[58px] rounded-lg bg-gray-100" />
                             ))}
@@ -190,7 +190,7 @@
                             {gruposFiltrados.length > 1 && (
                                 <h4 className="text-2xs font-semibold uppercase tracking-wide text-gray-500 first-letter:uppercase">{grupo.titulo}</h4>
                             )}
-                            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
                                 {grupo.itens.map((item) => (
                                     <Atalho key={item.path} item={item} />
                                 ))}
@@ -252,7 +252,7 @@
 
                 <BoasVindas usuario={usuarioLogado} destaque={destaque} />
 
-                <div className="grid items-start gap-5 lg:grid-cols-3 lg:gap-7.5">
+                <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3 lg:gap-7.5">
 
                     <AcessoRapido grupos={grupos} total={porPagina.size} carregando={!menu} />
 

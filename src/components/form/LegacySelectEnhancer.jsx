@@ -143,8 +143,19 @@
 
     }
 
+    //CAMPOS DE TEXTO/DATA DA BARRA DE FILTROS DO LEGADO VÊM COM width/min-width INLINE !important (ex.: 120px NO
+    //FrmCodigoTitulo, 90px NAS DATAS DO ?pag=estudos), QUE O CSS NÃO CONSEGUE SOBRESCREVER: SOLTA PARA O globals.css
+    //ALINHAR COM OS COMBOBOX (VER form.busca-painel-left)
+    const soltaLarguraDosFiltros = () => {
+        document.querySelectorAll('form.busca-painel-left input[style*="width"]').forEach((input) => {
+            input.style.removeProperty('width')
+            input.style.removeProperty('min-width')
+        })
+    }
+
     const varre = () => {
         document.querySelectorAll(`select:not([${MARCADOR}])`).forEach(aprimora)
+        soltaLarguraDosFiltros()
         limpaRemovidos()
     }
 

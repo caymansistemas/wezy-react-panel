@@ -45,7 +45,7 @@
 
     const SidebarFooter = forwardRef((props, ref) => {
 
-        const { logout, usuarioLogado } = useAuthContext()
+        const { sair, usuarioLogado } = useAuthContext()
         const itemUserRef = useRef(null)
         const { isRTL } = useLanguage()
         const { getMenuConfig } = useMenus()
@@ -108,7 +108,7 @@
 
                     <button
                         type="button"
-                        onClick={logout}
+                        onClick={sair}
                         aria-label="Sair"
                         title="Sair"
                         className="btn btn-icon btn-icon-lg size-9 shrink-0 rounded-lg text-gray-600 hover:bg-light hover:text-danger"

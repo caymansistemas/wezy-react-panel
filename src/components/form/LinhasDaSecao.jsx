@@ -8,7 +8,7 @@
 
     //TÍTULO/SUBTÍTULO À ESQUERDA DA LINHA, NA MESMA COLUNA DOS RÓTULOS DO FormInput
     const RotuloDaLinha = ({ title, subtitle, required = false }) => (
-        <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col h-full justify-center">
+        <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">
             <b>
                 {title}
                 {required && (
@@ -33,6 +33,9 @@
                 {comChaves(field.field, (item) => item.value).map(({ item, chave }) => (
                     <CustomRadio
                         key={chave}
+                        //id = name EM CADA OPÇÃO, COMO O Forms.php DO LEGADO: O JS DOS CARTÕES LÊ $('#RdoX:checked')
+                        //(ex.: #RdoSolidoTubular NO ?pag=estudos; SEM O id VINHA undefined E AS HORAS DE MO DAVAM NaN)
+                        id={item.name}
                         name={item.name}
                         value={item.value}
                         checked={formState[item.name] === item.value}
@@ -55,6 +58,8 @@
                 {comChaves(field.field, (item) => `${item.name}|${item.value}`).map(({ item, chave }) => (
                     <CustomCheckbox
                         key={chave}
+                        //id = name COMO NO LEGADO: O JS DOS CARTÕES USA $('#CkbX').is(':checked')
+                        id={item.name}
                         name={item.name}
                         value={item.value}
                         checked={Array.isArray(formState[item.name]) && formState[item.name].indexOf(item.value) !== -1}
@@ -89,7 +94,7 @@
             <div className={className} {...atributos}>
 
                 {title !== false && (
-                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col h-full justify-center">
+                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">
                         <b>{title}</b>
                         {subtitle && (<span className="text-[10px] text-gray-600"> {subtitle} </span>)}
                     </div>

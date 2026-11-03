@@ -2,7 +2,7 @@
     import { useResponsive } from '@/hooks'
     import { usePanelLayout } from '../'
     import { SidebarHeader, SidebarMenu, SidebarFooter } from './'
-    import { usePathname } from '@/providers'
+    import { useLocation } from 'react-router-dom'
     import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
     const Sidebar = () => {
@@ -10,7 +10,6 @@
         const headerRef                                   = useRef(null)
         const footerRef                                   = useRef(null)
         const desktopMode                                 = useResponsive('up', 'lg')
-        const { pathname, prevPathname }                  = usePathname()
         const { mobileSidebarOpen, setMobileSidebarOpen } = usePanelLayout()
         const [ search, setSearch ]                       = useState('')
         
@@ -42,13 +41,15 @@
 
         }
 
+        //FECHA O MENU NO MOBILE AO TROCAR DE PÁGINA. AS PÁGINAS DO PAINEL SÃO ?pag=..., ENTÃO O search TAMBÉM CONTA
+        const { pathname, search: queryString } = useLocation()
         useEffect(() => {
 
-            if (!desktopMode && prevPathname !== pathname) {
+            if (!desktopMode) {
                 setMobileSidebarOpen(false)
             }
 
-        }, [desktopMode, pathname, prevPathname, setMobileSidebarOpen])
+        }, [desktopMode, pathname, queryString, setMobileSidebarOpen])
 
         if (desktopMode) {
             return renderContent()
@@ -64,6 +65,8 @@
                         forceMount={true}
                         side="left"
                         close={false}
+                        //SEM FOCO AUTOMÁTICO NA BUSCA AO ABRIR (NO CELULAR ABRIA O TECLADO)
+                        onOpenAutoFocus={(event) => event.preventDefault()}
                     >
                         <SheetHeader className="sr-only">
                             <SheetTitle>Mobile Menu</SheetTitle>

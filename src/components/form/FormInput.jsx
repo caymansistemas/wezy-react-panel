@@ -17,7 +17,7 @@
             <div className={combinedClass} {...rowAttr}>
 
                 {title !== false && (
-                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col h-full justify-center">
+                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">
                         <label htmlFor={inputId}>
                             <b>
                                 {title}
