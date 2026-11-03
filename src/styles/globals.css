@@ -51,6 +51,37 @@ textarea[name='TxtHead'].tr-tipo-3 {
     height: 250px;
 }
 
+/* Botão de busca/filtro aguardando a API (utils/botaoCarregando.js): spinner no lugar do conteúdo, mesma largura. */
+[data-carregando] {
+    position: relative;
+    pointer-events: none;
+}
+button[data-carregando] > *,
+a[data-carregando] > * {
+    visibility: hidden;
+}
+button[data-carregando] {
+    color: transparent !important;
+}
+button[data-carregando]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    width: 1em;
+    height: 1em;
+    margin: auto;
+    border: 2px solid var(--cor-carregando, currentColor);
+    border-right-color: transparent;
+    border-radius: 9999px;
+    animation: botao-carregando 0.7s linear infinite;
+}
+@keyframes botao-carregando {
+    to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    button[data-carregando]::after { animation-duration: 2s; }
+}
+
 /* Cartões de tipo/máscara dos campos de formulário, vindos do HTML legado. */
 .legacy-html .tipo-campo-cards {
     align-items: stretch;
