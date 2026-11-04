@@ -5,6 +5,7 @@
     import { arquivosRemovidos } from './arquivosRemovidos'
     import { lerAbas, lerControladores, montaSecoes, valorDoControlador } from './estruturaDoFormulario'
     import { useEnvioDoFormulario } from './useEnvioDoFormulario'
+    import { camposObrigatoriosPreenchidos } from './obrigatoriosDoEnvio'
     import { temEditorDeCodigo, instalarEditorGlobal } from './editorGlobal'
     import { ScreenLoader } from '@/components/loaders'
     import { useLegacyCodeEditor } from './LegacyCodeEditor'
@@ -254,7 +255,14 @@
                         id="envioConteudo"
                         ref={prepararEnvioLegado}
                         encType="application/x-www-form-urlencoded"
-                        onSubmit={submitForm}
+                        //obg DE COMBOBOX/RADIO (SEM required NATIVO): AVISA E NÃO ENVIA (VER obrigatoriosDoEnvio)
+                        onSubmit={(e) => {
+                            if (!camposObrigatoriosPreenchidos(e.currentTarget)) {
+                                e.preventDefault()
+                                return
+                            }
+                            submitForm(e)
+                        }}
                     >
                         <CamposOcultos
                             hidden={data.form?.hidden_fields}

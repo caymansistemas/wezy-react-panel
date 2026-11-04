@@ -1,5 +1,6 @@
     import { useState } from 'react'
     import { Combobox } from './FormCombobox'
+    import { marcaObrigatorio } from './obrigatoriosDoEnvio'
     import { formatarTelefone, telefoneCompleto } from '@/utils/formMask'
 
     // CAMPO Mul DO PAINEL LEGADO — A PONTE (panel/module) ENVIA type 'select-multiple'
@@ -72,7 +73,7 @@
         }
 
         return (
-            <div className={combinedClass} {...rowAttr}>
+            <div className={combinedClass} {...rowAttr} {...marcaObrigatorio(required, fieldName, title)}>
 
                 {title !== false && (
                     <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">

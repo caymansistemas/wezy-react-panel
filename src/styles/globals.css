@@ -1389,3 +1389,10 @@ body .tox.tox-tinymce .tox-tbtn--enabled:hover {
         width: 100% !important;
     }
 }
+
+/* CAMPO obg VAZIO NO ENVIO (components/form/obrigatoriosDoEnvio.js): BORDA VERMELHA ATÉ O USUÁRIO MEXER NA LINHA */
+[data-obrigatorio-vazio] [role="combobox"],
+[data-obrigatorio-vazio] .custom-radiobutton-icon {
+    border-color: var(--tw-danger) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--tw-danger) 20%, transparent);
+}

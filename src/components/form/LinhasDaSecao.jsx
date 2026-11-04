@@ -5,6 +5,7 @@
     import { CustomCheckbox, CustomRadio } from './CustomFields'
     import { comChaves } from '@/utils/chavesUnicas'
     import { LINHA_ESCONDIDA } from './atributosDaLinha'
+    import { marcaObrigatorio } from './obrigatoriosDoEnvio'
 
     //TÍTULO/SUBTÍTULO À ESQUERDA DA LINHA, NA MESMA COLUNA DOS RÓTULOS DO FormInput
     const RotuloDaLinha = ({ title, subtitle, required = false }) => (
@@ -25,7 +26,7 @@
     )
 
     const LinhaRadio = ({ field, fieldName, className, atributos, formState, onRadio }) => (
-        <div className={className} {...atributos}>
+        <div className={className} {...atributos} {...marcaObrigatorio(field.required, field.field?.[0]?.name, field.title)}>
 
             <RotuloDaLinha title={field.title} subtitle={field.subtitle} required={field.required} />
 
