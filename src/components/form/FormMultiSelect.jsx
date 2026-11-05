@@ -76,7 +76,7 @@
             <div className={combinedClass} {...rowAttr} {...marcaObrigatorio(required, fieldName, title)}>
 
                 {title !== false && (
-                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">
+                    <div className="form-label w-full lg:w-64 lg:min-w-64 lg:shrink-0 flex-col lg:h-full justify-center">
                         {/* span E NÃO label: O CAMPO É UM COMBOBOX (NÃO UM INPUT NATIVO); O NOME CHEGA NELE PELO ariaLabel */}
                         <span>
                             <b>

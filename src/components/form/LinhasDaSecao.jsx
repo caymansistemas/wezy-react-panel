@@ -9,7 +9,7 @@
 
     //TÍTULO/SUBTÍTULO À ESQUERDA DA LINHA, NA MESMA COLUNA DOS RÓTULOS DO FormInput
     const RotuloDaLinha = ({ title, subtitle, required = false }) => (
-        <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">
+        <div className="form-label w-full lg:w-64 lg:min-w-64 lg:shrink-0 flex-col lg:h-full justify-center">
             <b>
                 {title}
                 {required && (
@@ -95,7 +95,7 @@
             <div className={className} {...atributos}>
 
                 {title !== false && (
-                    <div className="form-label w-full lg:w-56 lg:min-w-56 lg:shrink-0 flex-col lg:h-full justify-center">
+                    <div className="form-label w-full lg:w-64 lg:min-w-64 lg:shrink-0 flex-col lg:h-full justify-center">
                         <b>{title}</b>
                         {subtitle && (<span className="text-[10px] text-gray-600"> {subtitle} </span>)}
                     </div>

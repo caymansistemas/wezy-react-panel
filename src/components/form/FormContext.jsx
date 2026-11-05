@@ -5,7 +5,7 @@
     import { arquivosRemovidos } from './arquivosRemovidos'
     import { lerAbas, lerControladores, montaSecoes, valorDoControlador } from './estruturaDoFormulario'
     import { useEnvioDoFormulario } from './useEnvioDoFormulario'
-    import { camposObrigatoriosPreenchidos } from './obrigatoriosDoEnvio'
+    import { avisarCampoInvalido, camposObrigatoriosPreenchidos } from './obrigatoriosDoEnvio'
     import { temEditorDeCodigo, instalarEditorGlobal } from './editorGlobal'
     import { ScreenLoader } from '@/components/loaders'
     import { useLegacyCodeEditor } from './LegacyCodeEditor'
@@ -255,6 +255,8 @@
                         id="envioConteudo"
                         ref={prepararEnvioLegado}
                         encType="application/x-www-form-urlencoded"
+                        //required NATIVO VAZIO: AVISA QUAL CAMPO (VER avisarCampoInvalido)
+                        onInvalidCapture={avisarCampoInvalido}
                         //obg DE COMBOBOX/RADIO (SEM required NATIVO): AVISA E NÃO ENVIA (VER obrigatoriosDoEnvio)
                         onSubmit={(e) => {
                             if (!camposObrigatoriosPreenchidos(e.currentTarget)) {

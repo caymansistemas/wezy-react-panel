@@ -57,7 +57,7 @@
     const BotoesDaSecao = ({ form, loading }) => (
         <div className="flex flex-wrap lg:flex-nowrap gap-2.5 lg:gap-4 px-4">
 
-            <div className="hidden lg:block lg:w-56 lg:min-w-56 lg:shrink-0"></div>
+            <div className="hidden lg:block lg:w-64 lg:min-w-64 lg:shrink-0"></div>
 
             <div className="w-full lg:flex-1 flex flex-wrap items-center gap-2.5">
                 <button type="submit" className="btn btn-success" disabled={Boolean(loading)}>

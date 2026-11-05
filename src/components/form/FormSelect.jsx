@@ -83,7 +83,7 @@
         return (
             <div className={combinedClass} {...rowAttr} {...marcaObrigatorio(required, nomeCampo, fieldData.title || field.title)}>
 
-                <div className="form-label flex flex-col w-full lg:w-56 lg:min-w-56 lg:shrink-0 lg:h-full justify-center">
+                <div className="form-label flex flex-col w-full lg:w-64 lg:min-w-64 lg:shrink-0 lg:h-full justify-center">
                     <b>
                         {fieldData.title || field.title}
                         {required && (

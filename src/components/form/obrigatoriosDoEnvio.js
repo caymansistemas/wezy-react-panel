@@ -37,6 +37,49 @@
 
     }
 
+    //LINHA DO CAMPO: O ANCESTRAL QUE TEM O .form-label (TÍTULO) COMO FILHO DIRETO (VER FormInput)
+    const linhaDoCampo = (campo, form) => {
+        let linha = campo.parentElement
+        while (linha && linha !== form) {
+            if (linha.querySelector(':scope > .form-label')) return linha
+            linha = linha.parentElement
+        }
+        return null
+    }
+
+    const rotuloDoCampo = (campo, linha) =>
+        (campo.getAttribute('aria-label') || linha?.querySelector(':scope > .form-label label')?.textContent || '').replace(/\s*\*\s*$/, '').trim()
+
+    //CAMPO NATIVO required INVÁLIDO NO ENVIO (EVENTO invalid DA VALIDAÇÃO DO NAVEGADOR). O BALÃO DO NAVEGADOR NÃO DIZ O
+    //CAMPO, E CAMPO ESCONDIDO (textarea DO TinyMCE, LINHA ESCONDIDA PELA BUSCA DO textos-e-imagens) NEM TEM BALÃO: O ENVIO
+    //PARAVA SEM AVISO NENHUM ("An invalid form control ... is not focusable"). AQUI AVISA O PRIMEIRO CAMPO DE CADA ENVIO,
+    //DESTACA A LINHA E LEVA ATÉ ELA (O EDITOR TinyMCE RECEBE O FOCO)
+    export const avisarCampoInvalido = (event) => {
+
+        const campo = event.target
+        const form  = event.currentTarget
+        if (!(campo instanceof HTMLElement) || form.__campoInvalidoAvisado) return
+
+        form.__campoInvalidoAvisado = true
+        setTimeout(() => { form.__campoInvalidoAvisado = false }, 0)
+
+        const linha  = linhaDoCampo(campo, form)
+        const rotulo = rotuloDoCampo(campo, linha) || 'obrigatório'
+
+        avisoErro(campo.validity?.valueMissing ? `Preencha o campo "${rotulo}".` : `Confira o campo "${rotulo}": ${campo.validationMessage}`)
+
+        if (linha) destacar(linha)
+
+        //DEPOIS DO JS DO CARTÃO (QUE PODE MOSTRAR A LINHA, ex.: LIMPAR A BUSCA DO textos-e-imagens)
+        setTimeout(() => {
+            const editor = campo.id && window.tinymce?.get?.(campo.id)
+            const alvo   = editor?.getContainer?.() || linha || campo
+            alvo.scrollIntoView({ block: 'center', behavior: 'smooth' })
+            if (editor) editor.focus()
+        }, 0)
+
+    }
+
     //ATRIBUTOS DA LINHA OBRIGATÓRIA (SPREAD DEPOIS DO rowAttr DA PONTE)
     export const marcaObrigatorio = (required, name, rotulo) =>
         required && name ? { 'data-obrigatorio': name, 'data-rotulo': String(rotulo || '').trim() } : {}

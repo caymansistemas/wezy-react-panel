@@ -48,7 +48,7 @@
 
                 {/* flex-col COMO OS OUTROS CAMPOS: justify-center CENTRALIZA NA VERTICAL. EM LINHA (flex) ELE
                     CENTRALIZAVA O TÍTULO NA HORIZONTAL, FORA DO ALINHAMENTO À ESQUERDA DO FORMULÁRIO */}
-                <label htmlFor={`${fieldName}-${idx}`} className="form-label flex flex-col w-full lg:w-56 lg:min-w-56 lg:shrink-0 lg:h-full justify-center">
+                <label htmlFor={`${fieldName}-${idx}`} className="form-label flex flex-col w-full lg:w-64 lg:min-w-64 lg:shrink-0 lg:h-full justify-center">
                     <b>
                         {fieldData.title || title}
                         {requiredField && (
