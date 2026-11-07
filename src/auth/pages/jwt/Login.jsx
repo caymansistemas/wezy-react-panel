@@ -118,7 +118,7 @@ const Login = ({ destino }) => {
     }
 
     return (
-        <div className="card max-w-[390px] w-full">
+        <div className="card max-w-[390px] mx-2 w-full sm:mx-0">
             <form
                 className="card-body flex flex-col gap-5 p-10"
                 onSubmit={enviar}

@@ -19,7 +19,7 @@
     const EmailObrigatorio = () => {
 
         const { getMenuConfig, fetchMenu } = useMenus()
-        const { logout } = useAuth()
+        const { sair } = useAuth()
 
         const [email, setEmail]       = useState('')
         const [erro, setErro]         = useState('')
@@ -116,7 +116,7 @@
                                 <button type="submit" className="btn btn-primary flex justify-center grow" disabled={enviando}>
                                     {enviando ? 'Salvando…' : 'Salvar e continuar'}
                                 </button>
-                                <button type="button" className="btn btn-sm btn-light flex justify-center" onClick={logout} disabled={enviando}>
+                                <button type="button" className="btn btn-sm btn-light flex justify-center" onClick={sair} disabled={enviando}>
                                     Sair
                                 </button>
                             </div>

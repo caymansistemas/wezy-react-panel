@@ -272,9 +272,22 @@
 
         }, [ searchParams, navigate, callApi, location.state ])
 
+        //RESPOSTA DE UM POST DO CARTÃO (FILTRO DO .legacy-html) QUE JÁ TRAZ A TELA INTEIRA: MOSTRA DIRETO, SEM O GET DE
+        //RECARREGAR A MESMA TELA (ERAM 2 REQUISIÇÕES POR CLIQUE). DEVOLVE false QUANDO A RESPOSTA NÃO É UMA TELA
+        const aplicarResposta = useCallback((corpo) => {
+            const data = corpo?.success?.response?.data;
+            if (!data?.layout) return false;
+            chamadaAtualRef.current?.abort();
+            chamadaAtualRef.current = null;
+            setPageData(data);
+            setError(null);
+            setLoading(false);
+            return true;
+        }, []);
+
         const value = useMemo(
-            () => ({ pageData, loading, error, callApi, redirecting }),
-            [pageData, loading, error, callApi, redirecting]
+            () => ({ pageData, loading, error, callApi, aplicarResposta, redirecting }),
+            [pageData, loading, error, callApi, aplicarResposta, redirecting]
         )
 
         return (

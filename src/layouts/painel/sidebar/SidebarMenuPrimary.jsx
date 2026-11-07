@@ -29,7 +29,8 @@
 
             if (item.disabled) return lista
 
-            const bate = normalizarBusca(item.title).includes(termo)
+            //PELO NOME OU PELO LINK DO MÓDULO (?pag=relatorio-vendas: "relatorio-v" ACHA)
+            const bate = normalizarBusca(item.title).includes(termo) || normalizarBusca(moduloDoLink(item.path)).includes(termo)
 
             if (item.children) {
                 if (bate) {

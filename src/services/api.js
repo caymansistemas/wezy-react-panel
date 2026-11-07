@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as authHelper from '../auth/_helpers'
 import { getCustomerHost } from '@/utils/customerHost'
 import { getApiUrl } from '@/utils/apiUrl'
+import { instalarBotaoCarregando } from '@/utils/botaoCarregando'
 import {
     isSystemNotFoundError,
     notifySystemNotFound,
@@ -36,5 +37,6 @@ api.interceptors.response.use(
 )
 
 authHelper.setupAxios(api)
+instalarBotaoCarregando(api)
 
 export { api }

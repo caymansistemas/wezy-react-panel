@@ -5,6 +5,7 @@
     import { arquivosRemovidos } from './arquivosRemovidos'
     import { lerAbas, lerControladores, montaSecoes, valorDoControlador } from './estruturaDoFormulario'
     import { useEnvioDoFormulario } from './useEnvioDoFormulario'
+    import { avisarCampoInvalido, camposObrigatoriosPreenchidos } from './obrigatoriosDoEnvio'
     import { temEditorDeCodigo, instalarEditorGlobal } from './editorGlobal'
     import { ScreenLoader } from '@/components/loaders'
     import { useLegacyCodeEditor } from './LegacyCodeEditor'
@@ -228,7 +229,8 @@
         ))
 
         return (
-            <div className="grid gap-1 mx-auto">
+            //grid-cols-1 = minmax(0,1fr): A COLUNA "auto" CRESCIA ATÉ A LARGURA DAS ABAS ($setBotoesForm) E ELAS NÃO ROLAVAM
+            <div className="grid grid-cols-1 gap-1 mx-auto">
 
                 {abas && <FormTabs tabs={abas} />}
 
@@ -253,7 +255,16 @@
                         id="envioConteudo"
                         ref={prepararEnvioLegado}
                         encType="application/x-www-form-urlencoded"
-                        onSubmit={submitForm}
+                        //required NATIVO VAZIO: AVISA QUAL CAMPO (VER avisarCampoInvalido)
+                        onInvalidCapture={avisarCampoInvalido}
+                        //obg DE COMBOBOX/RADIO (SEM required NATIVO): AVISA E NÃO ENVIA (VER obrigatoriosDoEnvio)
+                        onSubmit={(e) => {
+                            if (!camposObrigatoriosPreenchidos(e.currentTarget)) {
+                                e.preventDefault()
+                                return
+                            }
+                            submitForm(e)
+                        }}
                     >
                         <CamposOcultos
                             hidden={data.form?.hidden_fields}

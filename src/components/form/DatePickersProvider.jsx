@@ -2,6 +2,8 @@ import { useMemo } from 'react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { ptBR } from '@mui/x-date-pickers/locales'
+import 'dayjs/locale/pt-br'
 import { useSettings } from '@/providers/SettingsProvider'
 
 export const DatePickersProvider = ({ children }) => {
@@ -19,7 +21,12 @@ export const DatePickersProvider = ({ children }) => {
 
     return (
         <ThemeProvider theme={theme}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {/* MESES/DIAS DA SEMANA (adapterLocale) E TEXTOS DOS BOTÕES (localeText) EM PORTUGUÊS */}
+            <LocalizationProvider
+                dateAdapter={AdapterDayjs}
+                adapterLocale="pt-br"
+                localeText={ptBR.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
                 {children}
             </LocalizationProvider>
         </ThemeProvider>

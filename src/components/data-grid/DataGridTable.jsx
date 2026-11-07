@@ -235,6 +235,9 @@ const DataGridTable = () => {
                                     headCellSpacing,
                                     cellBorder && 'border-e',
                                     'h-11 min-w-[20px] text-left rtl:text-right align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pe-0',
+                                    //COLUNA DE TEXTO (SEM LARGURA DO CARTÃO) NÃO ESPREME ABAIXO DE 140px EM TELA ESTREITA
+                                    //(FICAVA UMA PALAVRA POR LINHA): A TABELA PASSA A ROLAR NO scrollable-x-auto
+                                    !header.column.columnDef.meta?.headerStyle?.width && 'min-w-[140px]',
                                     header.column.columnDef.meta
                                         ?.headerClassName
                                 )}

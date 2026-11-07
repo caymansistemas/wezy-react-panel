@@ -13,18 +13,18 @@ const AVATAR_PADRAO = '/media/avatars/gray/6.png'
 
 const CabecalhoDoUsuario = ({ usuario }) => (
     <div className="flex items-center justify-between px-5 py-1.5 gap-1.5">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0">
             <img
-                className="size-9 rounded-full border-2 border-success object-cover"
+                className="size-9 shrink-0 rounded-full border-2 border-success object-cover"
                 src={usuario?.foto || toAbsoluteUrl(AVATAR_PADRAO)}
                 onError={(e) => { e.currentTarget.src = toAbsoluteUrl(AVATAR_PADRAO) }}
                 alt=""
             />
-            <div className="flex flex-col gap-1.5">
-                <div className="text-sm text-gray-800 hover:text-primary font-semibold leading-none">
+            <div className="flex flex-col gap-1.5 min-w-0">
+                <div className="text-sm text-gray-800 hover:text-primary font-semibold leading-none truncate">
                     {usuario?.nome}
                 </div>
-                <div className="text-xs text-gray-600 hover:text-primary font-medium leading-none">
+                <div className="text-xs text-gray-600 hover:text-primary font-medium leading-none truncate">
                     {usuario?.email}
                 </div>
             </div>
@@ -66,7 +66,7 @@ const ModulosDoUsuario = ({ itens }) => {
 const RodapeDoUsuario = () => {
 
     const { settings, storeSettings } = useSettings()
-    const { logout } = useAuthContext()
+    const { sair } = useAuthContext()
 
     return (
         <div className="flex flex-col">
@@ -96,7 +96,7 @@ const RodapeDoUsuario = () => {
                 {/* AÇÃO, NÃO NAVEGAÇÃO: <button> (O <a> SEM href NÃO RECEBIA FOCO PELO TECLADO) */}
                 <button
                     type="button"
-                    onClick={logout}
+                    onClick={sair}
                     className="btn btn-sm btn-light justify-center"
                 >
                     <FormattedMessage id="USER.MENU.LOGOUT" />
@@ -108,7 +108,7 @@ const RodapeDoUsuario = () => {
 }
 
 // CONTEÚDO DO MENU DO USUÁRIO (DENTRO DO MenuSub QUE O SidebarFooter MONTA — O MenuItem PRECISA DELE COMO FILHO DIRETO)
-const DropdownUserPanel = () => {
+const DropdownUserPanel = ({ onTrocarConta, podeTrocarConta = false }) => {
 
     const { usuarioLogado } = useAuthContext()
     const { getMenuConfig } = useMenus()
@@ -117,6 +117,12 @@ const DropdownUserPanel = () => {
         <>
             <CabecalhoDoUsuario usuario={usuarioLogado} />
             <ModulosDoUsuario itens={getMenuConfig('primary')?.user} />
+            {podeTrocarConta && <div className="menu-item">
+                <button type="button" className="menu-link text-start" onClick={onTrocarConta}>
+                    <MenuIcon className="menu-icon"><KeenIcon icon="profile-circle" /></MenuIcon>
+                    <MenuTitle>Trocar de conta</MenuTitle>
+                </button>
+            </div>}
             <RodapeDoUsuario />
         </>
     )

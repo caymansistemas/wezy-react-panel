@@ -50,8 +50,8 @@
 
     }
 
+    //O FAVICON VEM DO index.html (public/favicon.ico) — NÃO SOBRESCREVER AQUI
     const TITULO_DO_SITE = 'Cayman Sistemas'
-    const FAVICON        = 'https://files.caymanweb.com.br/f7e00f1f7c8e403b99f72159635a3f34/90426c66d0ad4e8318e8a9fba07dd9cb/favicon.png'
 
     //CABEÇALHO DA TELA (TÍTULO, MIGALHAS, AVISO, HTML EXTRA DO CARTÃO, CSS/JS DA PÁGINA) DERIVADO DO pageData.
     //A PONTE NÃO RESOLVE O NOME DOS SUBMÓDULOS (VER utils/moduleHeading.js), ENTÃO TÍTULO E MIGALHAS SÃO COMPLETADOS
@@ -162,7 +162,6 @@
 
                     <title>{cabecalho.tituloDaAba}</title>
 
-                    <link rel="icon" type="image/png" href={FAVICON} />
                     <meta name="title" content={cabecalho.tituloDaAba} />
 
                     {/* MÁSCARAS DO LEGADO (Mascara, Telefone, Cpf...) QUE O HTML DOS CARTÕES CHAMA NO onkeypress — VER utils/mascarasDoLegado */}
@@ -175,13 +174,14 @@
 
                 </Helmet>
 
-                <div className="flex grow">
+                {/* min-w-0 NOS ITENS FLEX DO LAYOUT: SEM ELE A COLUNA CRESCE ATÉ O CONTEÚDO MAIS LARGO (TABELA, ABAS) E O body GANHA SCROLL HORIZONTAL NO MOBILE */}
+                <div className="flex grow min-w-0">
 
                     <Sidebar />
 
                     {mobileMode && <Header />}
 
-                    <div className="flex flex-col lg:flex-row grow pt-[--tw-header-height] lg:pt-0">
+                    <div className="flex flex-col lg:flex-row grow min-w-0 pt-[calc(var(--tw-header-height)+env(safe-area-inset-top,0px))] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)] lg:pt-0">
 
                         <div className="flex flex-col grow items-stretch rounded-xl bg-[--tw-content-bg] dark:bg-[--tw-content-bg-dark] border border-gray-300 dark:border-gray-200 lg:ms-[--tw-sidebar-width] mt-0 lg:mt-[15px] m-[15px]">
 
@@ -195,8 +195,9 @@
 
                                         {breadcrumbs && (
                                             //HOVER SÓ NOS ITENS NAVEGÁVEIS — O ÚLTIMO (PÁGINA ATUAL) VEM COM href="javascript:void(0);"
+                                            //text-[13px] NO CONTAINER: O $novoCaminho DO CARTÃO PODE TERMINAR EM TEXTO SEM <a> (ex.: "> Galeria")
                                             <div
-                                                className="breadcrumbs mt-0.5 [&_a]:transition-colors [&_a:not([href^='javascript']):hover]:text-primary [&_a:not([href^='javascript']):hover]:underline [&_a:not([href^='javascript']):hover]:underline-offset-2 [&_a[href^='javascript']]:cursor-default"
+                                                className="breadcrumbs mt-0.5 text-[13px] [&_a]:transition-colors [&_a:not([href^='javascript']):hover]:text-primary [&_a:not([href^='javascript']):hover]:underline [&_a:not([href^='javascript']):hover]:underline-offset-2 [&_a[href^='javascript']]:cursor-default"
                                                 dangerouslySetInnerHTML={{ __html: breadcrumbs }}
                                             />
                                         )}

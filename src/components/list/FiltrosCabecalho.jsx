@@ -237,7 +237,7 @@
         const camposVisiveis = campos.filter((campo) => campo.type !== 'hidden')
 
         return (
-            <form className="card" onSubmit={filtrar}>
+            <form className="card" onSubmit={filtrar} data-botao-carregando>
                 <div className="card-body flex flex-wrap items-end gap-4 py-4">
 
                     {camposVisiveis.map((campo) => (

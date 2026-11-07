@@ -1,6 +1,7 @@
     
     import { useMemo, useRef } from 'react'
     import { Combobox } from './FormCombobox'
+    import { marcaObrigatorio } from './obrigatoriosDoEnvio'
 
     //FOLHA DE ESTILO (projetos-css-padrao): OS SELECTS DE COR ("Background", "Background hover"...) LISTAM OS ESTILOS DE COR
     //PELO ÍNDICE ("3:526" = "[COR-2]"). A COR DO ESTILO É O CAMPO CorColor_<índice>_color DO MESMO FORMULÁRIO E A OPACIDADE O
@@ -80,9 +81,9 @@
         }
         
         return (
-            <div className={combinedClass} {...rowAttr}>
+            <div className={combinedClass} {...rowAttr} {...marcaObrigatorio(required, nomeCampo, fieldData.title || field.title)}>
 
-                <div className="form-label flex flex-col w-full lg:w-56 lg:min-w-56 lg:shrink-0 h-full justify-center">
+                <div className="form-label flex flex-col w-full lg:w-64 lg:min-w-64 lg:shrink-0 lg:h-full justify-center">
                     <b>
                         {fieldData.title || field.title}
                         {required && (
@@ -90,7 +91,7 @@
                         )}
                     </b>
                     {(fieldData.subtitle || field.subtitle) && (
-                        <span className="text-[10px]">
+                        <span className="text-[10px] text-gray-600">
                             {' '}
                             {fieldData.subtitle || field.subtitle}{' '}
                         </span>

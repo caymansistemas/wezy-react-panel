@@ -57,7 +57,7 @@
     const BotoesDaSecao = ({ form, loading }) => (
         <div className="flex flex-wrap lg:flex-nowrap gap-2.5 lg:gap-4 px-4">
 
-            <div className="hidden lg:block lg:w-56 lg:min-w-56 lg:shrink-0"></div>
+            <div className="hidden lg:block lg:w-64 lg:min-w-64 lg:shrink-0"></div>
 
             <div className="w-full lg:flex-1 flex flex-wrap items-center gap-2.5">
                 <button type="submit" className="btn btn-success" disabled={Boolean(loading)}>
@@ -182,7 +182,7 @@
                     ficaria recuada nas laterais em vez de atravessar o card inteiro. */}
                 {/* A BORDA SEPARADORA SÓ CONTA AS LINHAS VISÍVEIS: A ESCONDIDA POR data-valid-* (NO DOM) NÃO FAZ A PRIMEIRA
                     VISÍVEL GANHAR BORDA EM CIMA */}
-                <div className={`card-body !px-0 grid gap-4 empty:hidden [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-t [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-[color:var(--form-divider)] [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:pt-4${semLinhaVisivel ? ' !hidden' : ''}`}>
+                <div className={`card-body !px-0 grid grid-cols-1 gap-4 empty:hidden [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-t [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:border-[color:var(--form-divider)] [&>:not(.linha-valid-escondida)~:not(.linha-valid-escondida)]:pt-4${semLinhaVisivel ? ' !hidden' : ''}`}>
 
                     {linhas.map(({ field, chave, idx, linha }) => (
                         <CampoDaSecao key={chave} field={field} idx={idx} className={linha.className} atributos={linha.atributos} secao={secao} />
