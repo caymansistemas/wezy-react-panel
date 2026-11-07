@@ -1,4 +1,4 @@
-    import { useMemo, useState } from 'react'
+    import { useEffect, useMemo, useState } from 'react'
     import { DataGrid } from '@/components'
     import { LegacyList } from './LegacyList'
     import { LegacyHtml } from '@/components/legacy/LegacyHtml'
@@ -28,6 +28,14 @@
     }
 
     const idDaLinha = (row) => row['row-id']
+
+    // AÇÕES EM LOTE DO CARD: NO $addBotaoListagem, {selecionados} VIRA OS IDS MARCADOS (1,2,3) E {qtdSelecionados} A
+    // QUANTIDADE (ex.: href="?pag=x&acao=aprovar&ids={selecionados}")
+    const MARCADOR_SELECIONADOS = '{selecionados}'
+
+    const aplicaSelecionados = (html, selecionados) => html
+        .replaceAll(MARCADOR_SELECIONADOS, selecionados.map(encodeURIComponent).join(','))
+        .replaceAll('{qtdSelecionados}', String(selecionados.length))
 
     // HTML DA LISTAGEM MONTADO PELO PRÓPRIO CARD ($novoResultadoInicial) — CHEGA EM
     // list.content, ÀS VEZES ANINHADO EM ARRAYS, ENTÃO ACHATAMOS ANTES DE RENDERIZAR
@@ -62,7 +70,13 @@
         if (model !== modeloAnterior) {
             setModeloAnterior(model)
             setModels(Array.isArray(model) ? model : [])
+            setSelectedRows([])
         }
+
+        //A MARCAÇÃO DO GRID TAMBÉM RECOMEÇA (ex.: DEPOIS DE UMA AÇÃO EM LOTE QUE RECARREGA A LISTAGEM)
+        useEffect(() => {
+            selectionTable.current?.setRowSelection({})
+        }, [model, selectionTable])
 
         const totalRegistros = totalDaListagem(pagination, model, removedIds.size)
 
@@ -158,9 +172,12 @@
                     <RodapeExclusao selecionados={selectedRows.length} onExcluir={() => removeItems(selectedRows)} />
                 )}
 
-                {/* $addBotaoListagem DO CARTÃO (HTML DO LEGADO, ex.: confirmar(...)) */}
+                {/* $addBotaoListagem DO CARTÃO (HTML DO LEGADO, ex.: confirmar(...)); COM {selecionados}, SEM NADA MARCADO FICA ESMAECIDO */}
                 {typeof extraButton === 'string' && extraButton.trim() !== '' && (
-                    <LegacyHtml html={extraButton} className="mt-3" />
+                    <LegacyHtml
+                        html={aplicaSelecionados(extraButton, selectedRows)}
+                        className={`mt-3 transition-opacity ${extraButton.includes(MARCADOR_SELECIONADOS) && selectedRows.length === 0 ? 'opacity-40 pointer-events-none' : ''}`}
+                    />
                 )}
             </div>
         )
