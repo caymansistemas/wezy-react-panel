@@ -50,8 +50,9 @@
         </div>
     )
 
+    //Ckb OBRIGATÓRIO: PELO MENOS UMA OPÇÃO MARCADA (AS OPÇÕES PODEM TER NAMES DIFERENTES, VAI A LISTA SEPARADA POR ESPAÇO)
     const LinhaCheckbox = ({ field, className, atributos, formState, onCheckbox }) => (
-        <div className={className} {...atributos}>
+        <div className={className} {...atributos} {...marcaObrigatorio(field.required, [...new Set((field.field || []).map((item) => item.name).filter(Boolean))].join(' '), field.title)}>
 
             <RotuloDaLinha title={field.title} subtitle={field.subtitle} required={field.required} />
 

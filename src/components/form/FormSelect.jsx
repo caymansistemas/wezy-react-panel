@@ -121,7 +121,7 @@
                     type="hidden"
                     id={nomeCampo}
                     name={nomeCampo}
-                    value={formState[nomeCampo] || ''}
+                    value={formState[nomeCampo] ?? ''}
                 />
 
             </div>

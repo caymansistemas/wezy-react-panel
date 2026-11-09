@@ -156,7 +156,7 @@
                     ref={inputRef}
                     type="text"
                     className={className}
-                    value={valor || ''}
+                    value={valor ?? ''}
                     onChange={(e) => onValor(e.target.value)}
                 />
                 <SugestoesDoInput inputRef={inputRef} sugestoes={sugestoes} valor={valor} onEscolher={onValor} />

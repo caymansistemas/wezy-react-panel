@@ -75,7 +75,7 @@
                 className={classeDoInput(fieldClass, fieldData)}
                 name={fieldName}
                 id={inputId}
-                value={valor || ''}
+                value={String(valor ?? '')}
                 required={required}
                 //COM MÁSCARA O VALOR VEM DO onAccept (RECOMENDADO PELO react-imask): A MÁSCARA REESCREVE O TEXTO SOZINHA
                 //(TROCA FIXO/CELULAR, COLAR, AUTOPREENCHIMENTO) E O onChange PODIA NÃO ACOMPANHAR — O ESTADO FICAVA COM O
@@ -153,7 +153,7 @@
 
         //CAMPOS QUE O index.php LEGADO VIRAVA EDITOR DE CÓDIGO (ex.: CSS/JS DAS SECTIONS)
         if (temEditorDeCodigo(fieldName)) {
-            return <FormCodeEditor fieldName={fieldName} value={valor || ''} onChange={onValor} />
+            return <FormCodeEditor fieldName={fieldName} value={String(valor ?? '')} onChange={onValor} />
         }
 
         return (
@@ -162,7 +162,7 @@
                 name={fieldName}
                 id={inputId}
                 aria-label={rotulo}
-                value={valor || ''}
+                value={valor ?? ''}
                 required={required}
                 onChange={(e) => onValor(e.target.value)}
             />
@@ -180,12 +180,13 @@
         Array.isArray(fieldData.formats) && fieldData.formats.length > 0 ? fieldData.formats.map((format) => `.${format}`).join(',') : padrao
 
     const campoArquivo = (padrao) => {
-        const CampoArquivo = ({ inputId, fieldName, fieldData, valor, rotulo }) => (
+        const CampoArquivo = ({ inputId, fieldName, fieldData, valor, required, rotulo }) => (
             <FormFile
                 id={inputId}
                 rotulo={rotulo}
                 fieldName={fieldName}
                 multiple={true}
+                required={required}
                 value={valor || ''}
                 accept={acceptDoCampo(fieldData, padrao)}
                 maxSize={TAMANHO_MAXIMO_DO_ARQUIVO}

@@ -145,7 +145,8 @@
                     type="file"
                     multiple={multiple}
                     accept={accept}
-                    required={required}
+                    //OBRIGATÓRIO SÓ SEM ARQUIVO SALVO (OU COM ELE MARCADO PARA REMOVER): NA EDIÇÃO O ARQUIVO ATUAL JÁ VALE
+                    required={required && (!value || removido)}
                     onChange={handleFileChange}
                 />
 

@@ -23,13 +23,16 @@
 
         const vazia = [...form.querySelectorAll('[data-obrigatorio]')].find((linha) => {
             if (linha.closest('.' + LINHA_ESCONDIDA)) return false
-            return !dados.getAll(linha.getAttribute('data-obrigatorio')).some((valor) => typeof valor !== 'string' || !VAZIO.has(valor.trim()))
+            //VÁRIOS NAMES SEPARADOS POR ESPAÇO (GRUPO DE Ckb): BASTA UM COM VALOR
+            const nomes = linha.getAttribute('data-obrigatorio').split(' ').filter(Boolean)
+            return !nomes.some((nome) => dados.getAll(nome).some((valor) => typeof valor !== 'string' || !VAZIO.has(valor.trim())))
         })
 
         if (!vazia) return true
 
+        const rotulo = vazia.getAttribute('data-rotulo') || 'obrigatório'
         destacar(vazia)
-        avisoErro(`Preencha o campo "${vazia.getAttribute('data-rotulo') || 'obrigatório'}".`)
+        avisoErro(vazia.querySelector('input[type="checkbox"]') ? `Marque o campo "${rotulo}".` : `Preencha o campo "${rotulo}".`)
         vazia.scrollIntoView({ block: 'center', behavior: 'smooth' })
         vazia.querySelector('[role="combobox"], input:not([type="hidden"])')?.focus({ preventScroll: true })
 
