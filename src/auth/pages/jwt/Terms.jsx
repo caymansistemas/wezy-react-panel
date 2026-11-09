@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { comCliente } from '@/utils/customerHost'
-import { PANEL_LOGO } from '@/config/branding'
+import { PANEL_LOGO, PANEL_LOGO_DARK } from '@/config/branding'
 import { KeenIcon } from '@/components'
 
 // OS TERMOS VINHAM DO CARD "public-webservice", QUE NÃO EXISTE NOS PAINÉIS
@@ -21,13 +21,10 @@ const Terms = () => {
                         style={{ width: '135px' }}
                     />
                     <img
-                        src={PANEL_LOGO}
+                        src={PANEL_LOGO_DARK}
                         alt="Logo"
                         className="hidden dark:block"
-                        style={{
-                            filter: 'brightness(100)',
-                            width: '135px',
-                        }}
+                        style={{ width: '135px' }}
                     />
                 </div>
 

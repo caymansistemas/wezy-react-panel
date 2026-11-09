@@ -1,11 +1,10 @@
-import { PANEL_LOGO } from '@/config/branding'
+import { PANEL_LOGO, PANEL_LOGO_DARK } from '@/config/branding'
 import { useMenus } from '@/providers'
 
 // LOGO DO PAINEL (SIDEBAR E CABEÇALHO DO MOBILE). COM "Usar logotipo customizado" NO CADASTRO DO CLIENTE (CARTÃO
 // clientes > Customização) O panel/menus MANDA logo (TEMA CLARO) E logo_dark (TEMA ESCURO), CADA UMA OPCIONAL.
-// CADA TEMA É INDEPENDENTE: SEM A IMAGEM DAQUELE TEMA, ELE MOSTRA O PADRÃO (PANEL_LOGO, CAYMAN). A TROCA É SÓ CSS (dark:),
-// ACOMPANHA O TEMA NA HORA. O brightness(100) (LOGO BRANCO NO ESCURO) É SÓ PARA O PADRÃO — NUM JPG DO CLIENTE DEIXARIA
-// A IMAGEM INTEIRA BRANCA
+// CADA TEMA É INDEPENDENTE: SEM A IMAGEM DAQUELE TEMA, ELE MOSTRA O PADRÃO DO TEMA (PANEL_LOGO / PANEL_LOGO_DARK, CAYMAN).
+// A TROCA É SÓ CSS (dark:), ACOMPANHA O TEMA NA HORA
 const PanelLogo = ({ width = 135 }) => {
 
     const { getMenuConfig } = useMenus()
@@ -23,10 +22,10 @@ const PanelLogo = ({ width = 135 }) => {
                 style={{ width, height: logoClaro ? 'auto' : undefined }}
             />
             <img
-                src={logoEscuro || PANEL_LOGO}
+                src={logoEscuro || PANEL_LOGO_DARK}
                 alt="Logo"
                 className="hidden dark:block"
-                style={{ width, height: logoEscuro ? 'auto' : undefined, filter: logoEscuro ? undefined : 'brightness(100)' }}
+                style={{ width, height: logoEscuro ? 'auto' : undefined }}
             />
         </>
     )

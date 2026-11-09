@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { useState } from 'react'
-import { PANEL_LOGO } from '@/config/branding'
+import { PANEL_LOGO, PANEL_LOGO_DARK } from '@/config/branding'
 import { KeenIcon } from '@/components'
 
 // PEÇAS DAS TELAS DE ACESSO (LOGIN E CADASTRO)
@@ -9,12 +9,7 @@ const LogoDoAcesso = ({ className = 'mb-2' }) => (
     <div className={clsx('text-center', className)}>
         <div className="flex gap-3 mb-2.5 items-center">
             <img src={PANEL_LOGO} alt="Logo" className="dark:hidden" style={{ width: '135px' }} />
-            <img
-                src={PANEL_LOGO}
-                alt="Logo"
-                className="hidden dark:block"
-                style={{ filter: 'brightness(100)', width: '135px' }}
-            />
+            <img src={PANEL_LOGO_DARK} alt="Logo" className="hidden dark:block" style={{ width: '135px' }} />
         </div>
     </div>
 )
