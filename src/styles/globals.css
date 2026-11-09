@@ -1076,6 +1076,12 @@ body .tox.tox-tinymce .tox-statusbar__path-item,
 body .tox.tox-tinymce .tox-statusbar__wordcount {
     color: var(--tw-gray-500) !important;
 }
+/* A PRÉVIA DOS FORMATOS (MENU Títulos/Parágrafo) COPIA INLINE O FUNDO E A COR DO CONTEÚDO DO EDITOR,
+   VIRANDO UM QUADRADO CLARO NO HOVER. O MENU FICA NO .tox-silver-sink, FORA DO .tox-tinymce */
+.tox .tox-collection__item-label > * {
+    background-color: transparent !important;
+    color: inherit !important;
+}
 /* O CONTORNO AZUL DE FOCO DO PRÓPRIO TinyMCE DUPLICAVA A BORDA DE FOCO ACIMA */
 body .tox.tox-tinymce .tox-edit-area::before {
     display: none !important;
