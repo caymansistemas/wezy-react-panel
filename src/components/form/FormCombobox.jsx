@@ -28,8 +28,10 @@
             return valor
         }
 
+        //color-<nome> (ESTILO DE COR DA FOLHA DE ESTILO, ex.: "[COR-2]"): A COR SÓ EXISTE NO SITE (--color-*). O CARTÃO
+        //DEFINE --wezy-color-<nome> COM A COR DO CLIENTE (estiloCoresDaFolhaNoPainel, funcoes-master DO 205)
         if (/^color-([a-zA-Z0-9-]+)$/.test(valor)) {
-            return `var(--${valor})`
+            return `var(--wezy-${valor}, var(--${valor}))`
         }
 
         return null
