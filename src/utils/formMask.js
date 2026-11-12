@@ -35,3 +35,7 @@ export const formatarTelefone = (valor) => {
 
 // TELEFONE COMPLETO: DDD + 8 (FIXO) OU 9 (CELULAR) DÍGITOS
 export const telefoneCompleto = (valor) => [10, 11].includes(String(valor ?? '').replace(/\D/g, '').length)
+
+// E-MAIL PARA TAGS DO Mul COM mascara-email (ex.: "E-mails que recebem as respostas" EM formularios): SÓ VIRA TAG
+// QUANDO TEM FORMATO DE E-MAIL (algo@dominio.ext). ESPAÇOS AO REDOR SÃO IGNORADOS
+export const emailValido = (valor) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(valor ?? '').trim())

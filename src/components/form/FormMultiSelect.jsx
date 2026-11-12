@@ -1,7 +1,7 @@
     import { useState } from 'react'
     import { Combobox } from './FormCombobox'
     import { marcaObrigatorio } from './obrigatoriosDoEnvio'
-    import { formatarTelefone, telefoneCompleto } from '@/utils/formMask'
+    import { formatarTelefone, telefoneCompleto, emailValido } from '@/utils/formMask'
 
     // CAMPO Mul DO PAINEL LEGADO — A PONTE (panel/module) ENVIA type 'select-multiple'
     // COM name JÁ SUFIXADO COM [] E options [{label, value, selected}].
@@ -18,6 +18,10 @@
         //TAGS COM A CLASSE mascara-telefone (ex.: Telefones adicionais DO cadastro-clientes): CADA TAG É UM TELEFONE FIXO (8
         //DÍGITOS) OU CELULAR/WHATSAPP (9) COM DDD, FORMATADO AO DIGITAR; SÓ VIRA TAG QUANDO O NÚMERO ESTÁ COMPLETO
         const tagsDeTelefone = isTags && (fieldData.class || '').includes('mascara-telefone')
+
+        //TAGS COM A CLASSE mascara-email (ex.: "E-mails que recebem as respostas" DO formularios): CADA TAG É UM E-MAIL VÁLIDO;
+        //ENTER/ESPAÇO NÃO CRIA TAG COM TEXTO FORA DO FORMATO. COLUNAS ANTIGAS (UM POR LINHA) CHEGAM JÁ CONVERTIDAS PELO CARTÃO
+        const tagsDeEmail = isTags && (fieldData.class || '').includes('mascara-email')
 
         //MODO TAGS: A PONTE MANDA COMO OPÇÕES SÓ OS VALORES JÁ SALVOS NO REGISTRO (PanelModule, Mul SEM TABELA) —
         //TODOS PODEM SAIR PELO X DA LISTA; AO SALVAR, SAEM DO REGISTRO
@@ -101,9 +105,9 @@
                         onChange={handleChange}
                         onRemoveOption={removeOpcao}
                         formatarTermo={tagsDeTelefone ? formatarTelefone : undefined}
-                        termoValido={tagsDeTelefone ? telefoneCompleto : undefined}
-                        avisoTermoInvalido="Digite o telefone completo com DDD (8 ou 9 dígitos)"
-                        placeholder={tagsDeTelefone ? 'Digite um telefone para adicionar' : isTags ? 'Digite para adicionar' : options.length ? 'Selecione' : 'Nenhuma opção disponível'}
+                        termoValido={tagsDeTelefone ? telefoneCompleto : tagsDeEmail ? emailValido : undefined}
+                        avisoTermoInvalido={tagsDeEmail ? 'Digite um e-mail válido (ex.: nome@dominio.com.br)' : 'Digite o telefone completo com DDD (8 ou 9 dígitos)'}
+                        placeholder={tagsDeTelefone ? 'Digite um telefone para adicionar' : tagsDeEmail ? 'Digite um e-mail e aperte Enter' : isTags ? 'Digite para adicionar' : options.length ? 'Selecione' : 'Nenhuma opção disponível'}
                     />
 
                     {selected.map((value) => (
