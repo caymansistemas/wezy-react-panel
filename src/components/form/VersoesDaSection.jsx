@@ -18,6 +18,10 @@
     //   RESTAURAR GRAVA DIRETO (acao=versoes-restaurar NO CARTÃO)
     // - CSS/JS DO EDITOR: ÁREAS css/js DO uso_livre, SÓ QUANDO ALGUMA VERSÃO USA. RESTAURA NO EDITOR, COMO O HTML
     // O CARTÃO MARCA O LUGAR COM <div data-versoes-section="ID">
+    // NAS TELAS DE CSS E JS DA SECTION (OUTRO CARTÃO, SEM O EDITOR DO HTML) O MARCADOR TEM TAMBÉM:
+    // - data-versoes-modulo="projetos-paginas-sections": O CARTÃO QUE RESPONDE versoes-conteudo/versoes-restaurar
+    // - data-versoes-aba="css|js": A ABA DESTA TELA. ABRE NELA E SÓ ELA RESTAURA (GRAVA E RECARREGA A PÁGINA, PARA O EDITOR
+    //   MOSTRAR O RESTAURADO); AS OUTRAS ABAS FICAM SÓ PARA CONSULTAR E COMPARAR
 
     const ABAS = [
         { chave: 'html', titulo: 'HTML', area: 'principal' },
@@ -46,8 +50,9 @@
         }
     }
 
-    const urlDoCartao = (extras) => {
+    const urlDoCartao = (extras, modulo = '') => {
         const params = new URLSearchParams(window.location.search)
+        if (modulo) params.set('pag', modulo)
         Object.entries(extras).forEach(([chave, valor]) => params.set(chave, valor))
         return buildApiUrl(params)
     }
@@ -96,13 +101,15 @@
 
     const VersoesDaSection = ({ elemento }) => {
 
-        const idSection = elemento.getAttribute('data-versoes-section')
+        const idSection   = elemento.getAttribute('data-versoes-section')
+        const moduloCartao = elemento.getAttribute('data-versoes-modulo') || ''
+        const abaDaPagina = elemento.getAttribute('data-versoes-aba') || ''
 
         const [aberto, setAberto]           = useState(false)
         const [carregando, setCarregando]   = useState(false)
         const [restaurando, setRestaurando] = useState(false)
         const [linhasDoTempo, setLinhasDoTempo] = useState(null)
-        const [aba, setAba]                 = useState('html')
+        const [aba, setAba]                 = useState(abaDaPagina || 'html')
         const [selecionada, setSelecionada] = useState(0)
         const [comparar, setComparar]       = useState('anterior')
         const [inteiro, setInteiro]         = useState(false)
@@ -113,7 +120,7 @@
         const carrega = async () => {
             setCarregando(true)
             try {
-                const dados = dadosDaResposta(await api.get(urlDoCartao({ acao: 'versoes-conteudo', id: idSection })))
+                const dados = dadosDaResposta(await api.get(urlDoCartao({ acao: 'versoes-conteudo', id: idSection }, moduloCartao)))
                 setLinhasDoTempo(dados?.timelines && typeof dados.timelines === 'object' ? dados.timelines : {})
             } catch {
                 setLinhasDoTempo(null)
@@ -143,7 +150,9 @@
         const versoes      = linhasDoTempo?.[aba] || []
         const versao       = versoes[selecionada]
         const anterior     = versoes[selecionada + 1]
-        const noEditorAba  = abaAtual?.area !== undefined
+        //TELA DE CSS/JS: SÓ A ABA DA PRÓPRIA TELA RESTAURA; AS DEMAIS (HTML, OUTRO CSS/JS) SÓ CONSULTA
+        const restauravel  = !abaDaPagina || aba === abaDaPagina
+        const noEditorAba  = restauravel && abaAtual?.area !== undefined
 
         //"atual": O QUE MUDA AO RESTAURAR ESTA VERSÃO (EDITOR, OU O SALVO HOJE NAS ABAS CSS/JS -> VERSÃO).
         //"anterior": O QUE ESTE SAVE MUDOU (VERSÃO ANTERIOR -> VERSÃO)
@@ -163,6 +172,8 @@
 
         const restaura = async () => {
 
+            if (!restauravel) return
+
             if (noEditorAba) {
                 restauraNoEditor(abaAtual.area, versao.content ?? '')
                 setAberto(false)
@@ -174,7 +185,7 @@
             setAberto(false)
             const confirmou = await confirm({
                 title: `Restaurar o ${abaAtual.titulo}?`,
-                description: `O ${abaAtual.titulo} da section volta para a versão de ${versao.date} e é salvo agora. O conteúdo atual continua guardado nas versões.`,
+                description: `O ${abaAtual.titulo} da section volta para a versão de ${versao.date} e é salvo agora. O conteúdo atual continua guardado nas versões.${abaDaPagina ? ' A página será recarregada: o que estiver sem salvar no editor será perdido.' : ''}`,
                 confirmText: 'Restaurar',
                 cancelText: 'Cancelar',
                 confirmClass: 'btn-primary',
@@ -186,9 +197,11 @@
 
             setRestaurando(true)
             try {
-                const dados = dadosDaResposta(await api.post(urlDoCartao({ acao: 'versoes-restaurar', id: idSection, timeline: aba, versao: versao.id }), {}))
+                const dados = dadosDaResposta(await api.post(urlDoCartao({ acao: 'versoes-restaurar', id: idSection, timeline: aba, versao: versao.id }, moduloCartao), {}))
                 if (dados?.status !== true) throw new Error(dados?.message)
                 toast.success(dados.message || `${abaAtual.titulo} restaurado.`)
+                //O EDITOR DA TELA AINDA TEM O CONTEÚDO ANTIGO E UM SALVAR SOBRESCREVERIA O RESTAURADO: RECARREGA
+                if (abaDaPagina) setTimeout(() => window.location.reload(), 800)
             } catch (erro) {
                 toast.error(erro?.message || `Não foi possível restaurar o ${abaAtual.titulo}.`)
             } finally {
@@ -315,13 +328,17 @@
                         {!carregando && versao && (
                             <DialogFooter className="flex flex-wrap items-center justify-between gap-2 px-5">
                                 <span className="text-xs text-gray-600">
-                                    {noEditorAba ? 'Restaurar coloca a versão no editor; salve a section para aplicar.' : `Restaurar salva o ${abaAtual.titulo} da section na hora.`}
+                                    {!restauravel
+                                        ? `Aqui só dá para consultar o ${abaAtual.titulo}. Para restaurar, ${abaAtual.chave === 'html' ? 'use a aba Geral da section' : `use a tela de ${abaAtual.titulo} da section`}.`
+                                        : noEditorAba ? 'Restaurar coloca a versão no editor; salve a section para aplicar.' : `Restaurar salva o ${abaAtual.titulo} da section na hora.`}
                                 </span>
                                 <div className="flex gap-2">
                                     <button type="button" className="btn btn-light" onClick={() => setAberto(false)}>Fechar</button>
-                                    <button type="button" className="btn btn-primary" onClick={restaura} disabled={restaurando || atual === (versao.content ?? '')}>
-                                        {`Restaurar ${abaAtual.titulo} desta versão`}
-                                    </button>
+                                    {restauravel && (
+                                        <button type="button" className="btn btn-primary" onClick={restaura} disabled={restaurando || atual === (versao.content ?? '')}>
+                                            {`Restaurar ${abaAtual.titulo} desta versão`}
+                                        </button>
+                                    )}
                                 </div>
                             </DialogFooter>
                         )}
