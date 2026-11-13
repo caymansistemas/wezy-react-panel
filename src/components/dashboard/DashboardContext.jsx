@@ -251,6 +251,15 @@
         return (
             <div className="flex flex-col gap-5 lg:gap-7.5">
 
+                {/* panel/menus MANDA senha_padrao QUANDO O USUÁRIO AINDA USA A SENHA PADRÃO (MESMO AVISO DO ?pag=analytics) */}
+                {menu?.senha_padrao === true && (
+                    <div className="alert-warning alert-padrao rounded-lg border border-warning/40 bg-warning-light px-4 py-3 text-sm text-gray-800" role="alert">
+                        Você ainda está acessando com a senha padrão!{' '}
+                        <Link to={'/?pag=administracao&acao=Alterar&id=' + (usuarioLogado?.id ?? '')} className="font-semibold underline">Clique aqui</Link>
+                        {' '}para atualizar sua senha!
+                    </div>
+                )}
+
                 <BoasVindas usuario={usuarioLogado} destaque={destaque} />
 
                 <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-3 lg:gap-7.5">
